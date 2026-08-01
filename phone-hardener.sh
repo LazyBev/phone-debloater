@@ -219,6 +219,7 @@ disable() {
 	done
 }
 
+missing_pkgs=()
 restore() { # re-enable / re-install system packages removed by disable()
 	for pkg in "$@"; do
 		if adb shell pm path "$pkg" >/dev/null 2>&1; then
@@ -227,6 +228,7 @@ restore() { # re-enable / re-install system packages removed by disable()
 		elif adb shell cmd package install-existing --user 0 "$pkg" >/dev/null 2>&1; then
 			echo "  restored: $pkg"
 		else
+			missing_pkgs+=("$pkg")
 			echo "  not in system: $pkg"
 		fi
 	done
@@ -244,10 +246,11 @@ reset() {
 		echo "  removed: futo keyboard"
 	fi
 	echo "keyboard:"
+	adb shell pm enable com.samsung.android.honeyboard >/dev/null 2>&1
 	local svc
 	svc="$(adb shell ime list -s -a 2>/dev/null | tr -d '\r' | grep honeyboard | head -1)"
+	[ -z "$svc" ] && svc="com.samsung.android.honeyboard/.service.HoneyBoardService"
 	if [ -n "$svc" ]; then
-		adb shell pm enable com.samsung.android.honeyboard >/dev/null 2>&1
 		adb shell ime enable "$svc" >/dev/null 2>&1
 		adb shell ime set "$svc" >/dev/null 2>&1
 		echo "  default: $svc"
@@ -278,6 +281,20 @@ reset() {
 	done
 	adb shell am set-standby-bucket --user 0 com.samsung.android.kgclient active >/dev/null 2>&1
 	echo "  defaults restored"
+	if [ ${#missing_pkgs[@]} -gt 0 ]; then
+		echo "not in /system (user-installed, must come from play store):"
+		printf '  %s\n' "${missing_pkgs[@]}"
+		echo -n "  open these in the play store? [y/n] "
+		read -r r
+		case "$r" in
+			y|Y|yes|YES)
+				for pkg in "${missing_pkgs[@]}"; do
+					adb shell am start -a android.intent.action.VIEW -d "market://details?id=$pkg" >/dev/null 2>&1
+				done
+				echo "  opened in play store"
+				;;
+		esac
+	fi
 	echo "done"
 }
 
