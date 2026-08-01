@@ -733,6 +733,11 @@ adb shell settings put global link_to_windows_service_pregranted_permissions ""
 adb shell settings put secure nearby_scanning_enabled 0
 adb shell settings put global captive_portal_detection_enabled 0
 adb shell settings put global stay_on_while_plugged_in 0
+if adb shell dumpsys wifi 2>/dev/null | tr -d '\r' | grep -q 'isMacRandomizationOn=true'; then
+	echo "  mac randomization: on (default persistent per-network)"
+else
+	echo "  warn: mac randomization appears OFF - check Settings > Wi-Fi > network > Privacy"
+fi
 echo "settings applied (dns, scanning off, 60s timeout, location off, lock-screen notif hidden, verifier on, backup off, nearby-scan off, captive-portal check off, wifi-open-net-notif off)"
 
 echo "gms (google play services) lockdown:"
