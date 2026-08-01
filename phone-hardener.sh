@@ -311,7 +311,6 @@ if ask "would you like to install these FOSS private apps?"; then
 	yes_install com.fossify.phone "Fossify Phone" && install_gh FossifyOrg/Phone com.fossify.phone "Fossify Phone"
 	yes_install fr.neamar.kiss "KISS Launcher" && install_fd fr.neamar.kiss "KISS Launcher"
 	yes_install org.cromite.cromite "Cromite" && install_gh uazo/cromite org.cromite.cromite "Cromite" 'arm64_ChromePublic\.apk'
-	yes_install org.mozilla.focus "Firefox Focus" && install_gh mozilla-mobile/focus-android org.mozilla.focus "Firefox Focus" 'focus-.*-arm64-v8a\.apk'
 	yes_install org.ironfoxoss.ironfox "IronFox" && install_ironfox
 	yes_install com.beemdevelopment.aegis "Aegis" && install_gh beemdevelopment/Aegis com.beemdevelopment.aegis "Aegis"
 	yes_install com.x8bit.bitwarden "Bitwarden" && install_gh bitwarden/mobile com.x8bit.bitwarden "Bitwarden" 'com\.x8bit\.bitwarden-fdroid\.apk'
@@ -338,10 +337,11 @@ if ask "would you like to install these FOSS private apps?"; then
 	yes_install proton.android.pass.fdroid "Proton Pass" && install_fd proton.android.pass.fdroid "Proton Pass"
 	yes_install me.proton.android.drive "Proton Drive" && install_gh ProtonDriveApps/android-drive me.proton.android.drive "Proton Drive"
 	yes_install com.protonvpn.android "Proton VPN" && install_gh ProtonVPN/android-app com.protonvpn.android "Proton VPN"
-	yes_install com.moez.QKSMS "QKSMS" && install_gh moezbhatti/qksms com.moez.QKSMS "QKSMS"
+	yes_install com.moez.QKSMS "QUIK" && install_gh quik-sms/quik dev.octoshrimpy.quik.fdroid "QUIK" 'fdroid'
 	yes_install org.mozilla.thunderbird "Thunderbird" && install_gh thunderbird/thunderbird-android org.mozilla.thunderbird "Thunderbird"
 	yes_install com.localsend.localsend "LocalSend" && install_gh localsend/localsend com.localsend.localsend "LocalSend" 'arm64v8'
 	yes_install com.pgpony.android "PGPony" && install_fd com.pgpony.android "PGPony"
+	yes_install com.machiav3lli.fdroid "Neo Store" && install_fd com.machiav3lli.fdroid "Neo Store"
 	yes_install com.termux "Termux" && install_gh termux/termux-app com.termux "Termux"
 	yes_install com.valhalla.thor "Thor App Manager" && install_gh trinadhthatakula/Thor com.valhalla.thor "Thor App Manager" 'foss-release'
 else
