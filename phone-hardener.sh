@@ -49,6 +49,7 @@ disable \
 
 echo "samsung:"
 disable \
+	com.sec.android.app.desktoplauncher \
 	com.samsung.android.bixby.wakeup \
 	com.samsung.android.bixby.vision \
 	com.samsung.android.app.spage \
@@ -212,13 +213,18 @@ adb shell settings put secure double_tap_to_wake 0
 adb shell settings put secure wake_gesture_enabled 0
 adb shell settings put global adaptive_battery_management_enabled 1
 adb shell settings put global app_standby_enabled 1
+adb shell settings put secure aod_mode 0
+adb shell settings put global mobile_data_always_on 0
+adb shell settings put secure screensaver_enabled 0
 # adb shell settings put secure nfc_on 0   # optional: saves a bit, breaks NFC (e.g. YubiKey)
+# adb shell settings put secure haptic_feedback_enabled 0   # optional: no vibration at all
+# adb shell am set-standby-bucket --user 0 com.google.android.gms restricted   # optional: may delay play updates/push
 for pkg in com.samsung.android.kgclient; do
 	if adb shell pm path "$pkg" >/dev/null 2>&1; then
 		adb shell am set-standby-bucket --user 0 "$pkg" restricted >/dev/null 2>&1 && echo "  restricted standby: $pkg"
 	fi
 done
-echo "performance applied (0.5x animations, auto-brightness, wake gestures off, adaptive battery)"
+echo "performance applied (0.5x animations, auto-brightness, wake gestures off, adaptive battery, AOD off, mobile data idle)"
 
 echo "futo keyboard:"
 futo="org.futo.inputmethod.latin"
