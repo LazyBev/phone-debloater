@@ -734,11 +734,15 @@ except Exception:
 	fi
 	[ -z "$url" ] && url="https://github.com/futo-org/android-keyboard/releases/download/0.1.29.1/keyboard-0.1.29.1.apk"
 	tmp="$(mktemp -d)/futo.apk"
-	if curl -sL --max-time 300 -o "$tmp" "$url" && adb install -r "$tmp"; then
+	out=""
+	adb shell settings put global verifier_verify_adb_installs 0 >/dev/null 2>&1
+	if curl -fsSL --progress-bar --max-time 300 -o "$tmp" "$url" && out="$(adb install -r "$tmp" 2>&1)"; then
 		echo "  installed $url"
 	else
-		echo "  install failed"
+		err="$(printf '%s' "$out" | tr -d '\r' | grep -oE 'INSTALL_FAILED_[A-Z_]+' | head -1)"
+		echo "  install failed ${err:+($err)}"
 	fi
+	adb shell settings put global verifier_verify_adb_installs 1 >/dev/null 2>&1
 fi
 if adb shell pm path "$futo" >/dev/null 2>&1; then
 	adb shell ime enable "$futo/.LatinIME" >/dev/null 2>&1
