@@ -439,17 +439,18 @@ ask() {
 }
 install_apk() { # file name
 	echo "    installing $2 (may take a minute)..."
-	if adb install -r "$1" >/dev/null 2>&1; then
+	if out="$(adb install -r "$1" 2>&1)"; then
 		echo "    installed $2"
 	else
-		echo "    FAILED $2"
+		err="$(printf '%s' "$out" | tr -d '\r' | grep -oE 'INSTALL_FAILED_[A-Z_]+' | head -1)"
+		echo "    FAILED $2 ${err:+($err)}"
 	fi
 }
 install_fd() { # id name
 	echo "    fetching $2 from f-droid... "
 	local vc
 	vc="$(curl -fsSL --max-time 30 "https://f-droid.org/api/v1/packages/$1" | python3 -c 'import json,sys; print(json.load(sys.stdin)["suggestedVersionCode"])' 2>/dev/null)"
-	[ -n "$vc" ] && echo "    downloading ${1}_${vc}.apk..." && curl -sL --progress-bar --max-time 300 -o "$tmp/$1.apk" "https://f-droid.org/repo/${1}_${vc}.apk"
+	[ -n "$vc" ] && echo "    downloading ${1}_${vc}.apk..." && curl -fsSL --progress-bar --max-time 300 -o "$tmp/$1.apk" "https://f-droid.org/repo/${1}_${vc}.apk"
 	[ -f "$tmp/$1.apk" ] && install_apk "$tmp/$1.apk" "$2" || echo "    FAILED $2 (fetch)"
 }
 install_gh() { # repo id name [filter]
@@ -490,7 +491,7 @@ else:
 	local tag apk
 	tag="${pick%%$'\n'*}"; apk="${pick#*$'\n'}"
 	echo "    downloading $apk ($tag)..."
-	if curl -sL --progress-bar --max-time 300 -o "$tmp/$2.apk" "https://github.com/$1/releases/download/$tag/$apk"; then
+	if curl -fsSL --progress-bar --max-time 300 -o "$tmp/$2.apk" "https://github.com/$1/releases/download/$tag/$apk"; then
 		install_apk "$tmp/$2.apk" "$3"
 	else
 		echo "    FAILED $3 (fetch)"
@@ -513,7 +514,7 @@ if best:
 else:
 	sys.exit(1)
 ' 2>/dev/null)"
-	[ -n "$apk" ] && echo "    downloading $apk..." && curl -sL --progress-bar --max-time 300 -o "$tmp/ironfox.apk" "https://fdroid.ironfoxoss.org/fdroid/repo/$apk"
+	[ -n "$apk" ] && echo "    downloading $apk..." && curl -fsSL --progress-bar --max-time 300 -o "$tmp/ironfox.apk" "https://fdroid.ironfoxoss.org/fdroid/repo/$apk"
 	[ -f "$tmp/ironfox.apk" ] && install_apk "$tmp/ironfox.apk" "IronFox" || echo "    FAILED IronFox (fetch)"
 }
 yes_install() { # id name
@@ -530,6 +531,9 @@ foss_count=38
 YESALL=0
 echo "  $foss_count apps:"
 if ask "would you like to install these FOSS private apps?"; then
+	adb shell settings put global verifier_verify_adb_installs 0 >/dev/null 2>&1
+	adb shell settings put global verifier_verify_installs 0 >/dev/null 2>&1
+	echo "  (package verifier disabled for installs; re-enabled in settings section)"
 	yes_install com.fossify.phone "Fossify Phone" && install_gh FossifyOrg/Phone com.fossify.phone "Fossify Phone"
 	yes_install fr.neamar.kiss "KISS Launcher" && install_fd fr.neamar.kiss "KISS Launcher"
 	yes_install org.cromite.cromite "Cromite" && install_gh uazo/cromite org.cromite.cromite "Cromite" 'arm64_ChromePublic\.apk'
@@ -565,7 +569,7 @@ if ask "would you like to install these FOSS private apps?"; then
 	yes_install com.localsend.localsend "LocalSend" && install_gh localsend/localsend com.localsend.localsend "LocalSend" 'arm64v8'
 	yes_install com.pgpony.android "PGPony" && install_fd com.pgpony.android "PGPony"
 	yes_install org.eu.exodus_privacy.exodusprivacy "Exodus Privacy" && install_fd org.eu.exodus_privacy.exodusprivacy "Exodus Privacy"
-	yes_install com.termux "Termux" && install_gh termux/termux-app com.termux "Termux"
+	yes_install com.termux "Termux" && install_fd com.termux "Termux"
 	yes_install com.valhalla.thor "Thor App Manager" && install_gh trinadhthatakula/Thor com.valhalla.thor "Thor App Manager" 'foss-release'
 	yes_install org.torproject.vpn "Tor VPN" && install_fd org.torproject.vpn "Tor VPN"
 else
