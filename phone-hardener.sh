@@ -10,6 +10,7 @@ bench_compare=0
 bench_a=""
 bench_b=""
 samsung_mode=0
+check_mode=0
 while [ "$#" -gt 0 ]; do
 	case "$1" in
 		--help|-h) help=1;;
@@ -17,6 +18,7 @@ while [ "$#" -gt 0 ]; do
 		--accept-all|-y) ACCEPT_ALL=1;;
 		--scan) scan=1;;
 		--samsung) samsung_mode=1;;
+		--check) check_mode=1;;
 		--bench) bench_mode=1; if [ $# -ge 2 ] && [ "${2#-}" = "$2" ]; then bench_label="$2"; shift; fi;;
 		--bench=*) bench_mode=1; bench_label="${1#--bench=}";;
 		--bench-compare) bench_compare=1; bench_a="${2:-}"; bench_b="${3:-}"; shift $(( $# >= 3 ? 2 : ( $# >= 2 ? 1 : 0 ) ));;
@@ -273,6 +275,16 @@ disable() {
 }
 
 missing_pkgs=()
+appops_deny=(
+	"org.mozilla.thunderbird CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS"
+	"de.danoeh.antennapod CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_SMS"
+	"com.junkfood.seal CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_SMS"
+	"ch.protonmail.android RECORD_AUDIO FINE_LOCATION COARSE_LOCATION"
+	"org.torproject.vpn FINE_LOCATION COARSE_LOCATION"
+	"com.localsend.localsend CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION"
+	"com.fossify.notes CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_SMS"
+	"com.fossify.calculator CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_SMS"
+)
 restore() { # re-enable / re-install system packages removed by disable()
 	for pkg in "$@"; do
 		if adb shell pm path "$pkg" >/dev/null 2>&1; then
@@ -337,7 +349,7 @@ reset() {
 	for k in wifi_scan_always_enabled bluetooth_scan_always_enabled lock_screen_lock_after_timeout \
 		location_mode doze_pulse_on_pick_up double_tap_to_wake wake_gesture_enabled aod_mode screensaver_enabled \
 		lock_screen_show_notifications lock_screen_allow_private_notifications nfc_on auto_revoke_permissions \
-		nearby_scanning_enabled location_scanning_enabled nfc_on; do
+		nearby_scanning_enabled location_scanning_enabled; do
 		adb shell settings delete secure "$k" >/dev/null 2>&1
 	done
 	for k in screen_off_timeout screen_brightness_mode; do
@@ -346,6 +358,10 @@ reset() {
 	adb shell am set-standby-bucket --user 0 com.samsung.android.kgclient active >/dev/null 2>&1
 	adb shell cmd appops reset com.google.android.gms >/dev/null 2>&1
 	adb shell cmd appops reset com.android.vending >/dev/null 2>&1
+	for entry in "${appops_deny[@]}"; do
+		adb shell cmd appops reset "${entry%% *}" >/dev/null 2>&1
+	done
+	adb shell cmd package install-existing --user 0 com.android.vending >/dev/null 2>&1
 	for p in com.facebook.appmanager com.facebook.services com.facebook.system \
 		com.google.android.adservices.api com.samsung.android.da.daagent \
 		com.samsung.android.dqagent com.samsung.android.knox.analytics.uploader; do
@@ -377,6 +393,7 @@ options:
   --samsung         list ALL preinstalled samsung/sec packages with state
   --bench[=label]   snapshot perf metrics (mem/procs/packages) to a file
   --bench-compare A B  diff two snapshots saved with --bench
+  --check           print privacy audit of the current device state
   --help|-h         show this help
 
 no options runs the full hardening interactively (per-app y/n/all prompts).
@@ -434,6 +451,61 @@ samsung_list() { # every samsung/sec package (incl. removed for user 0), with st
 	rm -f /tmp/samsung-all.txt /tmp/samsung-disabled.txt /tmp/samsung-installed.txt
 }
 
+privacy_check() { # audit current posture: settings, vpn, packages
+	g() { local v; v="$(adb shell settings get global "$1" 2>/dev/null | tr -d '\r')"; printf '  %-40s %s\n' "$1" "${v:-unset}"; }
+	s() { local v; v="$(adb shell settings get secure "$1" 2>/dev/null | tr -d '\r')"; printf '  %-40s %s\n' "$1" "${v:-unset}"; }
+	echo "privacy audit:"
+	echo "dns (private dns / dot):"
+	g private_dns_mode
+	g private_dns_specifier
+	echo "tracking/scanning:"
+	s wifi_scan_always_enabled
+	s bluetooth_scan_always_enabled
+	s nearby_scanning_enabled
+	s location_scanning_enabled
+	s location_mode
+	echo "network/radio:"
+	g adb_enabled
+	g adb_wifi_enabled
+	g wifi_networks_available_notification_on
+	g wifi_wakeup_enabled
+	s nfc_on
+	echo "vpn kill-switch:"
+	g always_on_vpn_package
+	g always_on_vpn_lockdown
+	echo "misc:"
+	g backup_enabled
+	g captive_portal_detection_enabled
+	g stay_on_while_plugged_in
+	g package_verifier_enable
+	echo "mac randomization:"
+	if adb shell dumpsys wifi 2>/dev/null | tr -d '\r' | grep -q 'isMacRandomizationOn=true'; then
+		echo "  on (persistent per-network)"
+	else
+		echo "  off/unreadable"
+	fi
+	local allpkg still=0 fos=0 total
+	allpkg="$(adb shell pm list packages 2>/dev/null | tr -d '\r' | sed 's/^package://')"
+	for p in "${google[@]}" "${samsung[@]}" "${samsung_deep[@]}" "${google_deep[@]}" "${tier1[@]}" "${tier2[@]}" "${userpicks[@]}"; do
+		echo "$allpkg" | grep -qx "$p" && still=$((still+1))
+	done
+	total=$(grep -oP '^\tyes_install \K\S+' "$0" | wc -l)
+	for p in $(grep -oP '^\tyes_install \K\S+' "$0"); do
+		echo "$allpkg" | grep -qx "$p" && fos=$((fos+1))
+	done
+	echo "packages:"
+	printf '  installed (user 0): %s\n' "$(echo "$allpkg" | grep -c '^com\.')"
+	printf '  disabled:           %s\n' "$(adb shell pm list packages -d 2>/dev/null | tr -d '\r' | grep -c '^package:')"
+	printf '  debloat targets still present: %s\n' "$still"
+	printf '  foss apps installed: %s/%s\n' "$fos" "$total"
+	echo "play store:"
+	if echo "$allpkg" | grep -qx com.android.vending; then
+		echo "  present"
+	else
+		echo "  removed (aurora/f-droid only)"
+	fi
+}
+
 bench() { # snapshot key performance metrics; --bench label
 	label="${1:-snapshot}"
 	out="$HOME/phone-bench-$label.txt"
@@ -479,6 +551,10 @@ if [ "$bench_mode" = 1 ]; then
 fi
 if [ "$samsung_mode" = 1 ]; then
 	samsung_list
+	exit 0
+fi
+if [ "$check_mode" = 1 ]; then
+	privacy_check
 	exit 0
 fi
 
@@ -747,7 +823,7 @@ echo "settings applied (dns, scanning off, 60s timeout, location off, lock-scree
 echo "gms (google play services) lockdown:"
 gms_uid="$(adb shell pm list packages -U 2>/dev/null | tr -d '\r' | sed -n 's/^package:com.google.android.gms.*uid:\([0-9]*\).*/\1/p' | head -1)"
 if [ -n "$gms_uid" ]; then
-	for op in CAMERA RECORD_AUDIO ACCESS_FINE_LOCATION ACCESS_COARSE_LOCATION \
+	for op in CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION \
 		READ_CONTACTS WRITE_CONTACTS READ_CALL_LOG WRITE_CALL_LOG \
 		READ_SMS WRITE_SMS RECEIVE_SMS SEND_SMS BODY_SENSORS ACTIVITY_RECOGNITION; do
 		adb shell cmd appops set --uid "$gms_uid" "$op" deny >/dev/null 2>&1
@@ -760,7 +836,7 @@ fi
 echo "play store (com.android.vending) lockdown:"
 vending_uid="$(adb shell pm list packages -U 2>/dev/null | tr -d '\r' | sed -n 's/^package:com.android.vending.*uid:\([0-9]*\).*/\1/p' | head -1)"
 if [ -n "$vending_uid" ]; then
-	for op in CAMERA RECORD_AUDIO ACCESS_FINE_LOCATION ACCESS_COARSE_LOCATION \
+	for op in CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION \
 		READ_CONTACTS WRITE_CONTACTS READ_SMS WRITE_SMS RECEIVE_SMS SEND_SMS; do
 		adb shell cmd appops set --uid "$vending_uid" "$op" deny >/dev/null 2>&1
 	done
@@ -768,6 +844,42 @@ if [ -n "$vending_uid" ]; then
 else
 	echo "  skip (play store not present)"
 fi
+
+echo "app-ops lockdown (extra apps):"
+for entry in "${appops_deny[@]}"; do
+	pkg="${entry%% *}"
+	ops="${entry#* }"
+	if adb shell pm path "$pkg" >/dev/null 2>&1; then
+		uid="$(adb shell pm list packages -U 2>/dev/null | tr -d '\r' | sed -n "s/^package:$pkg.*uid:\\([0-9]*\\).*/\\1/p" | head -1)"
+		if [ -n "$uid" ]; then
+			for op in $ops; do
+				adb shell cmd appops set --uid "$uid" "$op" deny >/dev/null 2>&1
+			done
+			echo "  denied ops for $pkg (uid $uid)"
+		fi
+	else
+		echo "  skip $pkg (not installed)"
+	fi
+done
+
+echo "play store removal:"
+r=n
+if [ "$ACCEPT_ALL" = 1 ]; then
+	r=y
+else
+	echo -n "  remove play store entirely? (aurora store remains) [y/n] "
+	read -r r
+fi
+case "$r" in
+	y|Y|yes|YES)
+		adb shell pm uninstall --user 0 com.android.vending >/dev/null 2>&1
+		if adb shell pm path com.android.vending >/dev/null 2>&1; then
+			echo "  play store removal failed (still present)"
+		else
+			echo "  play store removed (aurora store only)"
+		fi
+		;;
+esac
 
 echo "background-data restriction (netpolicy blacklist, applied only if present):"
 for p in com.facebook.appmanager com.facebook.services com.facebook.system \
