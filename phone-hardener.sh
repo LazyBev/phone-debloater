@@ -204,49 +204,158 @@ disable \
 	com.android.dreams.phototable \
 	com.samsung.android.app.talkback
 
-echo "tier 2 (replacements):"
+echo "foss private apps:"
 tmp="$(mktemp -d)"
-kiss="fr.neamar.kiss"
-if adb shell pm path "$kiss" >/dev/null 2>&1; then
-	echo "  kiss launcher: installed"
-else
-	vc="$(curl -fsSL --max-time 30 https://f-droid.org/api/v1/packages/$kiss | python3 -c 'import json,sys; print(json.load(sys.stdin)["suggestedVersionCode"])' 2>/dev/null)"
-	if [ -n "$vc" ] && curl -sL --max-time 120 -o "$tmp/kiss.apk" "https://f-droid.org/repo/${kiss}_${vc}.apk" && adb install -r "$tmp/kiss.apk" >/dev/null; then
-		echo "  kiss launcher v$vc installed"
+ask() {
+	[ "$YESALL" = 1 ] && { echo "  [all] $1: yes"; return 0; }
+	local r
+	while :; do
+		printf '  %s [y/n/all] ' "$1"
+		read -r r || return 1
+		case "$r" in
+			a|all|ALL) YESALL=1; echo "  -> yes to all"; return 0;;
+			y|Y|yes|YES) return 0;;
+			n|N|no|NO) return 1;;
+			*) ;;
+		esac
+	done
+}
+install_apk() { # file name
+	if adb install -r "$1" >/dev/null 2>&1; then
+		echo "    installed $2"
 	else
-		echo "  kiss install failed"
+		echo "    FAILED $2"
 	fi
-fi
-if adb shell pm path "$kiss" >/dev/null 2>&1; then
-	disable com.sec.android.app.launcher
-	adb shell cmd package set-home-activity "$kiss/fr.neamar.kiss.MainActivity" >/dev/null 2>&1 || true
-else
-	echo "  skip One UI Home (kiss launcher not installed)"
-fi
-phone="com.fossify.phone"
-if adb shell pm path "$phone" >/dev/null 2>&1; then
-	echo "  fossify phone: installed"
-else
-	url=""
-	if command -v gh >/dev/null 2>&1; then
-		url="$(gh api repos/FossifyOrg/Phone/releases/latest -q '.assets[] | select(.name | endswith("-foss-release.apk")) | .browser_download_url' 2>/dev/null)"
-	fi
-	[ -z "$url" ] && url="$(curl -s --max-time 30 https://api.github.com/repos/FossifyOrg/Phone/releases/latest | python3 -c '
+}
+install_fd() { # id name
+	local vc
+	vc="$(curl -fsSL --max-time 30 "https://f-droid.org/api/v1/packages/$1" | python3 -c 'import json,sys; print(json.load(sys.stdin)["suggestedVersionCode"])' 2>/dev/null)"
+	[ -n "$vc" ] && curl -sL --max-time 300 -o "$tmp/$1.apk" "https://f-droid.org/repo/${1}_${vc}.apk"
+	[ -f "$tmp/$1.apk" ] && install_apk "$tmp/$1.apk" "$2" || echo "    FAILED $2 (fetch)"
+}
+install_gh() { # repo id name [filter]
+	local rel pick
+	rel="$(gh api "repos/$1/releases/latest" -q '{tag: .tag_name, assets: [.assets[].name]} | @json' 2>/dev/null)"
+	if [ -z "$rel" ]; then
+		rel="$(curl -s --max-time 30 "https://api.github.com/repos/$1/releases/latest" | python3 -c '
 import json, sys
 try:
 	d = json.load(sys.stdin)
-	for a in d.get("assets", []):
-		if a["name"].endswith("-foss-release.apk"):
-			print(a["browser_download_url"]); sys.exit(0)
+	print(json.dumps({"tag": d["tag_name"], "assets": [a["name"] for a in d.get("assets", [])]}))
 except Exception:
 	pass' 2>/dev/null)"
-	if [ -n "$url" ] && curl -sL --max-time 300 -o "$tmp/phone.apk" "$url" && adb install -r "$tmp/phone.apk" >/dev/null; then
-		echo "  fossify phone installed"
-	else
-		echo "  fossify phone install failed"
 	fi
+	[ -z "$rel" ] && { echo "    FAILED $4 (release info)"; return; }
+	pick="$(printf '%s' "$rel" | python3 -c '
+import json, re, sys
+d = json.load(sys.stdin)
+flt = sys.argv[1] if len(sys.argv) > 1 else ""
+if flt.startswith("!"):
+	m = [n for n in d["assets"] if n.endswith(".apk") and not re.search(flt[1:], n)]
+elif flt:
+	m = [n for n in d["assets"] if n.endswith(".apk") and re.search(flt, n)]
+else:
+	m = []
+if not m:
+	m = [n for n in d["assets"] if n.endswith(".apk") and re.search(r"arm64[-_]?v?8a", n)]
+if not m:
+	m = [n for n in d["assets"] if n.endswith(".apk") and "universal" in n]
+if not m:
+	m = [n for n in d["assets"] if n.endswith(".apk")]
+if len(m) == 1:
+	print(d["tag"] + "\n" + m[0])
+else:
+	sys.exit(1)
+' "$4")" || { echo "    FAILED $4 (no matching apk)"; return; }
+	local tag apk
+	tag="${pick%%$'\n'*}"; apk="${pick#*$'\n'}"
+	if curl -sL --max-time 300 -o "$tmp/$2.apk" "https://github.com/$1/releases/download/$tag/$apk"; then
+		install_apk "$tmp/$2.apk" "$3"
+	else
+		echo "    FAILED $3 (fetch)"
+	fi
+}
+install_ironfox() { # arm64-v8a from custom fdroid repo
+	local apk
+	apk="$(curl -s --max-time 90 https://fdroid.ironfoxoss.org/fdroid/repo/index-v1.json | python3 -c '
+import json, sys
+d = json.load(sys.stdin)
+best = None
+for v in d["packages"]["org.ironfoxoss.ironfox"]:
+	nc = v.get("nativecode") or []
+	if "arm64-v8a" in nc or not nc:
+		if best is None or v["versionCode"] > best[0]:
+			best = (v["versionCode"], v["apkName"])
+if best:
+	print(best[1])
+else:
+	sys.exit(1)
+' 2>/dev/null)"
+	[ -n "$apk" ] && curl -sL --max-time 300 -o "$tmp/ironfox.apk" "https://fdroid.ironfoxoss.org/fdroid/repo/$apk"
+	[ -f "$tmp/ironfox.apk" ] && install_apk "$tmp/ironfox.apk" "IronFox" || echo "    FAILED IronFox (fetch)"
+}
+yes_install() { # id name
+	if adb shell pm path "$1" >/dev/null 2>&1; then
+		echo "    $2: already installed"
+		return 1
+	fi
+	if ask "install $2?"; then
+		return 0
+	fi
+	return 1
+}
+foss_count=36
+YESALL=0
+echo "  $foss_count apps:"
+if ask "would you like to install these FOSS private apps?"; then
+	yes_install com.fossify.phone "Fossify Phone" && install_gh FossifyOrg/Phone com.fossify.phone "Fossify Phone"
+	yes_install fr.neamar.kiss "KISS Launcher" && install_fd fr.neamar.kiss "KISS Launcher"
+	yes_install org.cromite.cromite "Cromite" && install_gh uazo/cromite org.cromite.cromite "Cromite" 'arm64_ChromePublic\.apk'
+	yes_install org.mozilla.focus "Firefox Focus" && install_gh mozilla-mobile/focus-android org.mozilla.focus "Firefox Focus" 'focus-.*-arm64-v8a\.apk'
+	yes_install org.ironfoxoss.ironfox "IronFox" && install_ironfox
+	yes_install com.beemdevelopment.aegis "Aegis" && install_gh beemdevelopment/Aegis com.beemdevelopment.aegis "Aegis"
+	yes_install com.x8bit.bitwarden "Bitwarden" && install_gh bitwarden/mobile com.x8bit.bitwarden "Bitwarden" 'com\.x8bit\.bitwarden-fdroid\.apk'
+	yes_install im.molly.app "Molly" && install_gh mollyim/mollyim-android im.molly.app "Molly"
+	yes_install de.danoeh.antennapod "AntennaPod" && install_fd de.danoeh.antennapod "AntennaPod"
+	yes_install com.aurora.store "Aurora Store" && install_fd com.aurora.store "Aurora Store"
+	yes_install app.zhaobozhen.libre "InnerTune" && install_gh z-huang/InnerTune app.zhaobozhen.libre "InnerTune" 'foss'
+	yes_install com.github.libretube "LibreTube" && install_gh libre-tube/LibreTube com.github.libretube "LibreTube"
+	yes_install com.brouken.player "Just Player" && install_gh moneytoo/Player com.brouken.player "Just Player" '!legacy'
+	yes_install com.junkfood.seal "Seal" && install_gh JunkFood02/Seal com.junkfood.seal "Seal"
+	yes_install deckers.thibault.aves.libre "Aves Gallery" && install_gh deckerst/aves deckers.thibault.aves.libre "Aves Gallery" 'app-libre-arm64-v8a-release\.apk'
+	yes_install com.fossify.contacts "Fossify Contacts" && install_gh fossifyorg/Contacts com.fossify.contacts "Fossify Contacts"
+	yes_install com.fossify.calendar "Fossify Calendar" && install_gh fossifyorg/Calendar com.fossify.calendar "Fossify Calendar"
+	yes_install com.fossify.clock "Fossify Clock" && install_gh fossifyorg/Clock com.fossify.clock "Fossify Clock"
+	yes_install com.fossify.calculator "Fossify Calculator" && install_gh fossifyorg/Calculator com.fossify.calculator "Fossify Calculator"
+	yes_install com.fossify.notes "Fossify Notes" && install_gh fossifyorg/Notes com.fossify.notes "Fossify Notes"
+	yes_install net.sourceforge.opencamera "Open Camera" && install_fd net.sourceforge.opencamera "Open Camera"
+	yes_install me.zhanghai.android.files "Material Files" && install_gh zhanghai/MaterialFiles me.zhanghai.android.files "Material Files" 'fdroid'
+	yes_install com.nutomic.syncthingandroid "Syncthing" && install_gh syncthing/syncthing-android com.nutomic.syncthingandroid "Syncthing"
+	yes_install eu.faircode.netguard "NetGuard" && install_gh M66B/NetGuard eu.faircode.netguard "NetGuard"
+	yes_install app.organicmaps "Organic Maps" && install_gh organicmaps/organicmaps app.organicmaps "Organic Maps"
+	yes_install com.breezyweather "Breezy Weather" && install_gh breezy-weather/breezy-weather com.breezyweather "Breezy Weather"
+	yes_install ch.protonmail.android "Proton Mail" && install_gh ProtonMail/proton-mail-android ch.protonmail.android "Proton Mail"
+	yes_install proton.android.pass.fdroid "Proton Pass" && install_fd proton.android.pass.fdroid "Proton Pass"
+	yes_install me.proton.android.drive "Proton Drive" && install_gh ProtonDriveApps/android-drive me.proton.android.drive "Proton Drive"
+	yes_install com.protonvpn.android "Proton VPN" && install_gh ProtonVPN/android-app com.protonvpn.android "Proton VPN"
+	yes_install com.moez.QKSMS "QKSMS" && install_gh moezbhatti/qksms com.moez.QKSMS "QKSMS"
+	yes_install org.mozilla.thunderbird "Thunderbird" && install_gh thunderbird/thunderbird-android org.mozilla.thunderbird "Thunderbird"
+	yes_install com.localsend.localsend "LocalSend" && install_gh localsend/localsend com.localsend.localsend "LocalSend" 'arm64v8'
+	yes_install com.pgpony.android "PGPony" && install_fd com.pgpony.android "PGPony"
+	yes_install com.termux "Termux" && install_gh termux/termux-app com.termux "Termux"
+	yes_install com.valhalla.thor "Thor App Manager" && install_gh trinadhthatakula/Thor com.valhalla.thor "Thor App Manager" 'foss-release'
+else
+	echo "  skipped"
 fi
-if adb shell pm path "$phone" >/dev/null 2>&1; then
+
+echo "tier 2 (removals):"
+if adb shell pm path fr.neamar.kiss >/dev/null 2>&1; then
+	disable com.sec.android.app.launcher
+	adb shell cmd package set-home-activity fr.neamar.kiss/fr.neamar.kiss.MainActivity >/dev/null 2>&1 || true
+else
+	echo "  skip One UI Home (kiss launcher not installed)"
+fi
+if adb shell pm path com.fossify.phone >/dev/null 2>&1; then
 	disable com.samsung.android.dialer
 else
 	echo "  skip samsung dialer (fossify phone not installed)"
@@ -355,13 +464,5 @@ disable \
 	com.microsoft.office.officehubrow \
 	com.microsoft.appmanager \
 	com.sec.android.app.myfiles
-
-echo "obtainium preset:"
-preset="$(dirname "$0")/obtainium-preset.json"
-if [ -f "$preset" ]; then
-	adb push "$preset" /sdcard/Download/obtainium-preset.json >/dev/null && echo "  pushed to /sdcard/Download/obtainium-preset.json"
-else
-	echo "  skip: $preset not found"
-fi
 
 echo done
