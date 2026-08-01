@@ -330,13 +330,14 @@ reset() {
 		backup_enabled adb_require_authorization bixby_pregranted_permissions \
 		link_to_windows_pregranted_permissions link_to_windows_service_pregranted_permissions \
 		always_on_vpn_package always_on_vpn_lockdown captive_portal_detection_enabled \
-		stay_on_while_plugged_in wifi_networks_available_notification_on; do
+		stay_on_while_plugged_in wifi_networks_available_notification_on \
+		wifi_wakeup_enabled adb_wifi_enabled; do
 		adb shell settings delete global "$k" >/dev/null 2>&1
 	done
 	for k in wifi_scan_always_enabled bluetooth_scan_always_enabled lock_screen_lock_after_timeout \
 		location_mode doze_pulse_on_pick_up double_tap_to_wake wake_gesture_enabled aod_mode screensaver_enabled \
 		lock_screen_show_notifications lock_screen_allow_private_notifications nfc_on auto_revoke_permissions \
-		nearby_scanning_enabled location_scanning_enabled; do
+		nearby_scanning_enabled location_scanning_enabled nfc_on; do
 		adb shell settings delete secure "$k" >/dev/null 2>&1
 	done
 	for k in screen_off_timeout screen_brightness_mode; do
@@ -731,6 +732,9 @@ adb shell settings put global bixby_pregranted_permissions ""
 adb shell settings put global link_to_windows_pregranted_permissions ""
 adb shell settings put global link_to_windows_service_pregranted_permissions ""
 adb shell settings put secure nearby_scanning_enabled 0
+adb shell settings put secure nfc_on 0
+adb shell settings put global wifi_wakeup_enabled 0
+adb shell settings put global adb_wifi_enabled 0
 adb shell settings put global captive_portal_detection_enabled 0
 adb shell settings put global stay_on_while_plugged_in 0
 if adb shell dumpsys wifi 2>/dev/null | tr -d '\r' | grep -q 'isMacRandomizationOn=true'; then
