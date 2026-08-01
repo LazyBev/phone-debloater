@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 set -u
+reset=0
+ACCEPT_ALL=0
+for arg in "$@"; do
+	case "$arg" in
+		--reset) reset=1;;
+		--accept-all|-y) ACCEPT_ALL=1;;
+	esac
+done
 keep="com.google.android.gms com.google.android.gsf com.google.android.gsf.login com.android.vending"
 google=(
 	com.google.android.googlequicksearchbox
@@ -106,6 +114,7 @@ samsung_deep=(
 	com.samsung.android.smartcallprovider
 	com.samsung.android.smartface
 	com.samsung.android.smartface.overlay
+	com.samsung.faceservice
 	com.samsung.android.sdk.ocr
 	com.samsung.android.aremojieditor
 	com.samsung.android.stickercenter
@@ -278,7 +287,7 @@ reset() {
 	done
 	for k in wifi_scan_always_enabled bluetooth_scan_always_enabled lock_screen_lock_after_timeout \
 		location_mode doze_pulse_on_pick_up double_tap_to_wake wake_gesture_enabled aod_mode screensaver_enabled \
-		lock_screen_show_notifications lock_screen_allow_private_notifications nfc_on; do
+		lock_screen_show_notifications lock_screen_allow_private_notifications nfc_on auto_revoke_permissions; do
 		adb shell settings delete secure "$k" >/dev/null 2>&1
 	done
 	for k in screen_off_timeout screen_brightness_mode; do
@@ -295,10 +304,10 @@ reset() {
 
 adb get-state >/dev/null 2>&1 || { echo "phone not connected (adb devices)"; exit 1; }
 
-case "${1:-}" in
-	--reset) reset; exit 0;;
-	*) ;;
-esac
+if [ "$reset" = 1 ]; then
+	reset
+	exit 0
+fi
 
 echo "google:"
 disable "${google[@]}"
@@ -318,6 +327,7 @@ disable "${tier1[@]}"
 echo "foss private apps:"
 tmp="$(mktemp -d)"
 ask() {
+	[ "$ACCEPT_ALL" = 1 ] && { echo "  [accept-all] $1: yes"; return 0; }
 	[ "$YESALL" = 1 ] && { echo "  [all] $1: yes"; return 0; }
 	local r
 	while :; do
@@ -356,7 +366,7 @@ try:
 except Exception:
 	pass' 2>/dev/null)"
 	fi
-	[ -z "$rel" ] && { echo "    FAILED $4 (release info)"; return; }
+	[ -z "$rel" ] && { echo "    FAILED ${4:-} (release info)"; return; }
 	pick="$(printf '%s' "$rel" | python3 -c '
 import json, re, sys
 d = json.load(sys.stdin)
@@ -377,7 +387,7 @@ if len(m) == 1:
 	print(d["tag"] + "\n" + m[0])
 else:
 	sys.exit(1)
-' "$4")" || { echo "    FAILED $4 (no matching apk)"; return; }
+' "${4:-}")" || { echo "    FAILED ${4:-} (no matching apk)"; return; }
 	local tag apk
 	tag="${pick%%$'\n'*}"; apk="${pick#*$'\n'}"
 	if curl -sL --max-time 300 -o "$tmp/$2.apk" "https://github.com/$1/releases/download/$tag/$apk"; then
@@ -483,6 +493,7 @@ adb shell settings put secure lock_screen_lock_after_timeout 30000
 adb shell settings put secure location_mode 0
 adb shell settings put secure lock_screen_show_notifications 0
 adb shell settings put secure lock_screen_allow_private_notifications 0
+adb shell settings put secure auto_revoke_permissions 1
 adb shell settings put global package_verifier_enable 1
 adb shell settings put global verifier_verify_installs 1
 adb shell settings put global verifier_verify_adb_installs 1
@@ -570,8 +581,13 @@ echo "user picks:"
 disable "${userpicks[@]}"
 
 echo "final lock-down:"
-echo -n "  disable adb/usb debugging? (re-enable in developer options later) [y/n] "
-read -r r
+r=n
+if [ "$ACCEPT_ALL" = 1 ]; then
+	r=y
+else
+	echo -n "  disable adb/usb debugging? (re-enable in developer options later) [y/n] "
+	read -r r
+fi
 case "$r" in
 	y|Y|yes|YES)
 		adb shell settings put global adb_enabled 0
