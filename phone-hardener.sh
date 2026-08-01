@@ -284,16 +284,6 @@ reset() {
 	if [ ${#missing_pkgs[@]} -gt 0 ]; then
 		echo "not in /system (user-installed, must come from play store):"
 		printf '  %s\n' "${missing_pkgs[@]}"
-		echo -n "  open these in the play store? [y/n] "
-		read -r r
-		case "$r" in
-			y|Y|yes|YES)
-				for pkg in "${missing_pkgs[@]}"; do
-					adb shell am start -a android.intent.action.VIEW -d "market://details?id=$pkg" >/dev/null 2>&1
-				done
-				echo "  opened in play store"
-				;;
-		esac
 	fi
 	echo "done"
 }
