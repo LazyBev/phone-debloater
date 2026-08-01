@@ -780,12 +780,8 @@ fi
 echo "vpn kill-switch:"
 if adb shell pm path ch.protonvpn.android >/dev/null 2>&1; then
 	r=n
-	if [ "$ACCEPT_ALL" = 1 ]; then
-		r=y
-	else
-		echo -n "  enable always-on vpn (proton) + lockdown? make sure you're logged into proton first [y/n] "
-		read -r r
-	fi
+	echo -n "  enable always-on vpn (proton) + lockdown? make sure you're logged into proton first [y/n] "
+	read -r r
 	case "$r" in
 		y|Y|yes|YES)
 			adb shell settings put global always_on_vpn_package ch.protonvpn.android
