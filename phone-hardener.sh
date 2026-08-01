@@ -207,13 +207,33 @@ futo="org.futo.inputmethod.latin"
 if adb shell pm path "$futo" >/dev/null 2>&1; then
 	echo "  installed"
 else
-	echo "  installing (needs curl + network)..."
-	url="https://github.com/futo-org/android-keyboard/releases/download/0.1.29.1/keyboard-0.1.29.1.apk"
+	echo "  fetching latest stable release info (needs curl + network)..."
+	url=""
+	if command -v gh >/dev/null 2>&1; then
+		url="$(gh api "repos/futo-org/android-keyboard/releases?per_page=5" \
+			-q '.[] | select(.prerelease == false) | .assets[] | select(.name | test("^keyboard-.*\\.apk$")) | .browser_download_url' 2>/dev/null | head -1)"
+	fi
+	if [ -z "$url" ] && command -v python3 >/dev/null 2>&1; then
+		url="$(curl -s --max-time 30 "https://api.github.com/repos/futo-org/android-keyboard/releases?per_page=5" | python3 -c "
+import json, sys
+try:
+	for rel in json.load(sys.stdin):
+		if rel.get('prerelease'):
+			continue
+		for a in rel.get('assets', []):
+			if a['name'].startswith('keyboard-') and a['name'].endswith('.apk'):
+				print(a['browser_download_url'])
+				sys.exit(0)
+except Exception:
+	pass
+" 2>/dev/null)"
+	fi
+	[ -z "$url" ] && url="https://github.com/futo-org/android-keyboard/releases/download/0.1.29.1/keyboard-0.1.29.1.apk"
 	tmp="$(mktemp -d)/futo.apk"
 	if curl -sL --max-time 300 -o "$tmp" "$url" && adb install -r "$tmp"; then
 		echo "  installed $url"
 	else
-		echo "  install failed (update version in script if a new release exists)"
+		echo "  install failed"
 	fi
 fi
 if adb shell pm path "$futo" >/dev/null 2>&1; then
