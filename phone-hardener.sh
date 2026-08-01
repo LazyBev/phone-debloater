@@ -204,16 +204,49 @@ disable \
 	com.android.dreams.phototable \
 	com.samsung.android.app.talkback
 
-echo "tier 2 (replacement needed):"
-if adb shell pm path fr.neamar.kiss >/dev/null 2>&1; then
-	echo "  kiss launcher present, removing One UI Home"
+echo "tier 2 (replacements):"
+tmp="$(mktemp -d)"
+kiss="fr.neamar.kiss"
+if adb shell pm path "$kiss" >/dev/null 2>&1; then
+	echo "  kiss launcher: installed"
+else
+	vc="$(curl -fsSL --max-time 30 https://f-droid.org/api/v1/packages/$kiss | python3 -c 'import json,sys; print(json.load(sys.stdin)["suggestedVersionCode"])' 2>/dev/null)"
+	if [ -n "$vc" ] && curl -sL --max-time 120 -o "$tmp/kiss.apk" "https://f-droid.org/repo/${kiss}_${vc}.apk" && adb install -r "$tmp/kiss.apk" >/dev/null; then
+		echo "  kiss launcher v$vc installed"
+	else
+		echo "  kiss install failed"
+	fi
+fi
+if adb shell pm path "$kiss" >/dev/null 2>&1; then
 	disable com.sec.android.app.launcher
-	adb shell cmd package set-home-activity fr.neamar.kiss/fr.neamar.kiss.MainActivity >/dev/null 2>&1 || true
+	adb shell cmd package set-home-activity "$kiss/fr.neamar.kiss.MainActivity" >/dev/null 2>&1 || true
 else
 	echo "  skip One UI Home (kiss launcher not installed)"
 fi
-if adb shell pm path com.fossify.phone >/dev/null 2>&1; then
-	echo "  fossify phone present, removing samsung dialer"
+phone="com.fossify.phone"
+if adb shell pm path "$phone" >/dev/null 2>&1; then
+	echo "  fossify phone: installed"
+else
+	url=""
+	if command -v gh >/dev/null 2>&1; then
+		url="$(gh api repos/FossifyOrg/Phone/releases/latest -q '.assets[] | select(.name | endswith("-foss-release.apk")) | .browser_download_url' 2>/dev/null)"
+	fi
+	[ -z "$url" ] && url="$(curl -s --max-time 30 https://api.github.com/repos/FossifyOrg/Phone/releases/latest | python3 -c '
+import json, sys
+try:
+	d = json.load(sys.stdin)
+	for a in d.get("assets", []):
+		if a["name"].endswith("-foss-release.apk"):
+			print(a["browser_download_url"]); sys.exit(0)
+except Exception:
+	pass' 2>/dev/null)"
+	if [ -n "$url" ] && curl -sL --max-time 300 -o "$tmp/phone.apk" "$url" && adb install -r "$tmp/phone.apk" >/dev/null; then
+		echo "  fossify phone installed"
+	else
+		echo "  fossify phone install failed"
+	fi
+fi
+if adb shell pm path "$phone" >/dev/null 2>&1; then
 	disable com.samsung.android.dialer
 else
 	echo "  skip samsung dialer (fossify phone not installed)"
