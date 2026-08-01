@@ -184,6 +184,7 @@ userpicks=(
 	com.microsoft.office.outlook
 	com.microsoft.skydrive
 	com.linkedin.android
+	com.sec.android.RilServiceModeApp
 	com.google.android.gm
 	com.sec.android.gallery3d
 	com.samsung.android.messaging
@@ -269,11 +270,15 @@ reset() {
 	fi
 	echo "settings:"
 	for k in private_dns_mode private_dns_specifier window_animation_scale transition_animation_scale \
-		animator_duration_scale adaptive_battery_management_enabled app_standby_enabled mobile_data_always_on; do
+		animator_duration_scale adaptive_battery_management_enabled app_standby_enabled mobile_data_always_on \
+		package_verifier_enable verifier_verify_installs verifier_verify_adb_installs hide_error_dialogs \
+		backup_enabled adb_require_authorization bixby_pregranted_permissions \
+		link_to_windows_pregranted_permissions link_to_windows_service_pregranted_permissions; do
 		adb shell settings delete global "$k" >/dev/null 2>&1
 	done
 	for k in wifi_scan_always_enabled bluetooth_scan_always_enabled lock_screen_lock_after_timeout \
-		location_mode doze_pulse_on_pick_up double_tap_to_wake wake_gesture_enabled aod_mode screensaver_enabled; do
+		location_mode doze_pulse_on_pick_up double_tap_to_wake wake_gesture_enabled aod_mode screensaver_enabled \
+		lock_screen_show_notifications lock_screen_allow_private_notifications nfc_on; do
 		adb shell settings delete secure "$k" >/dev/null 2>&1
 	done
 	for k in screen_off_timeout screen_brightness_mode; do
@@ -410,7 +415,7 @@ yes_install() { # id name
 	fi
 	return 1
 }
-foss_count=36
+foss_count=37
 YESALL=0
 echo "  $foss_count apps:"
 if ask "would you like to install these FOSS private apps?"; then
@@ -448,6 +453,7 @@ if ask "would you like to install these FOSS private apps?"; then
 	yes_install org.mozilla.thunderbird "Thunderbird" && install_gh thunderbird/thunderbird-android org.mozilla.thunderbird "Thunderbird"
 	yes_install com.localsend.localsend "LocalSend" && install_gh localsend/localsend com.localsend.localsend "LocalSend" 'arm64v8'
 	yes_install com.pgpony.android "PGPony" && install_fd com.pgpony.android "PGPony"
+	yes_install org.eu.exodus_privacy.exodusprivacy "Exodus Privacy" && install_fd org.eu.exodus_privacy.exodusprivacy "Exodus Privacy"
 	yes_install com.termux "Termux" && install_gh termux/termux-app com.termux "Termux"
 	yes_install com.valhalla.thor "Thor App Manager" && install_gh trinadhthatakula/Thor com.valhalla.thor "Thor App Manager" 'foss-release'
 else
@@ -475,7 +481,18 @@ adb shell settings put secure bluetooth_scan_always_enabled 0
 adb shell settings put system screen_off_timeout 60000
 adb shell settings put secure lock_screen_lock_after_timeout 30000
 adb shell settings put secure location_mode 0
-echo "settings applied (dns, scanning off, 60s timeout, location off)"
+adb shell settings put secure lock_screen_show_notifications 0
+adb shell settings put secure lock_screen_allow_private_notifications 0
+adb shell settings put global package_verifier_enable 1
+adb shell settings put global verifier_verify_installs 1
+adb shell settings put global verifier_verify_adb_installs 1
+adb shell settings put global hide_error_dialogs 1
+adb shell settings put global backup_enabled 0
+adb shell settings put global adb_require_authorization 1
+adb shell settings put global bixby_pregranted_permissions ""
+adb shell settings put global link_to_windows_pregranted_permissions ""
+adb shell settings put global link_to_windows_service_pregranted_permissions ""
+echo "settings applied (dns, scanning off, 60s timeout, location off, lock-screen notif hidden, verifier on, backup off)"
 
 echo "performance:"
 adb shell settings put global window_animation_scale 0.5
@@ -490,7 +507,7 @@ adb shell settings put global app_standby_enabled 1
 adb shell settings put secure aod_mode 0
 adb shell settings put global mobile_data_always_on 0
 adb shell settings put secure screensaver_enabled 0
-# adb shell settings put secure nfc_on 0   # optional: saves a bit, breaks NFC (e.g. YubiKey)
+adb shell settings put secure nfc_on 0   # breaks NFC (e.g. YubiKey); uncomment to keep
 # adb shell settings put secure haptic_feedback_enabled 0   # optional: no vibration at all
 # adb shell am set-standby-bucket --user 0 com.google.android.gms restricted   # optional: may delay play updates/push
 for pkg in com.samsung.android.kgclient; do
@@ -551,5 +568,17 @@ done
 
 echo "user picks:"
 disable "${userpicks[@]}"
+
+echo "final lock-down:"
+echo -n "  disable adb/usb debugging? (re-enable in developer options later) [y/n] "
+read -r r
+case "$r" in
+	y|Y|yes|YES)
+		adb shell settings put global adb_enabled 0
+		adb shell settings put global adb_wifi_enabled 0
+		adb shell settings put secure adb_wifi_enabled 0
+		echo "  adb disabled"
+		;;
+esac
 
 echo done
