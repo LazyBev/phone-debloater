@@ -1,6 +1,206 @@
 #!/usr/bin/env bash
 set -u
 keep="com.google.android.gms com.google.android.gsf com.google.android.gsf.login com.android.vending"
+google=(
+	com.google.android.googlequicksearchbox
+	com.google.android.apps.maps
+	com.google.android.youtube
+	com.google.android.apps.tachyon
+	com.google.android.apps.photos
+	com.google.android.apps.messaging
+	com.google.android.apps.wellbeing
+	com.google.android.feedback
+	com.google.android.apps.googleassistant
+	com.google.android.videos
+	com.google.android.apps.subscriptions.red
+	com.google.android.apps.magazines
+	com.google.android.play.games
+	com.google.android.apps.docs
+	com.google.android.apps.drive
+	com.google.android.apps.sheets
+	com.google.android.apps.slides
+	com.google.android.apps.tasks
+	com.google.android.apps.keep
+	com.google.android.apps.translate
+	com.google.android.apps.walletnfcrel
+	com.google.android.syncadapters.contacts
+	com.google.android.syncadapters.calendar
+)
+samsung=(
+	com.sec.android.app.desktoplauncher
+	com.samsung.android.bixby.wakeup
+	com.samsung.android.bixby.vision
+	com.samsung.android.app.spage
+	com.samsung.android.visionintelligence
+	com.samsung.android.bixby.agent
+	com.samsung.android.bixby.agent.dummy
+	com.samsung.android.app.routines
+	com.samsung.android.service.weather
+	com.samsung.android.mateagent
+	com.samsung.android.app.smartcapture
+	com.samsung.android.app.notes
+	com.samsung.android.samsungpass
+	com.samsung.android.samsungpassautofill
+	com.samsung.android.providers.context
+	com.samsung.android.game.gamehome
+	com.samsung.android.game.gametools
+	com.samsung.android.game.gos
+	com.samsung.android.lool
+	com.samsung.android.smartswitch
+	com.samsung.android.mobileservice
+	com.samsung.android.weather
+	com.samsung.android.video
+	com.samsung.android.app.reminder
+	com.samsung.android.music
+	com.samsung.android.oneconnect
+	com.samsung.android.honeyboard
+	com.samsung.android.svoiceime
+	com.sec.android.app.sbrowser
+	com.sec.android.app.billing
+	com.samsung.ucs.ucsservice
+	com.samsung.android.aremoji
+	com.samsung.android.arzone
+	com.samsung.android.airviewdictionary
+	com.sec.android.daemonapp
+)
+samsung_deep=(
+	com.sec.android.diagmonagent
+	com.sec.android.soagent
+	com.sec.android.iaft
+	com.sec.android.app.personalization
+	com.sec.android.app.safetyassurance
+	com.sec.automation
+	com.sec.bcservice
+	com.sec.android.sdhms
+	com.sec.imslogger
+	com.samsung.slsi.telephony.silentlogging
+	com.samsung.android.knox.analytics.uploader
+	com.samsung.android.sm.devicesecurity
+	com.samsung.android.da.daagent
+	com.samsung.android.dqagent
+	com.samsung.android.svcagent
+	com.samsung.android.mdecservice
+	com.samsung.android.fast
+	com.samsung.android.scpm
+	com.samsung.android.cmh
+	com.samsung.android.mydevice
+	com.samsung.android.aware.service
+	com.samsung.android.beaconmanager
+	com.samsung.android.location
+	com.samsung.android.samsungpositioning
+	com.samsung.android.ipsgeofence
+	com.samsung.android.mapsagent
+	com.sec.location.nsflp2
+	com.samsung.android.mhs.ai
+	com.samsung.android.intellivoiceservice
+	com.samsung.android.sree
+	com.samsung.android.aicore
+	com.samsung.android.rubin.app
+	com.samsung.android.app.interpreter
+	com.samsung.android.offline.languagemodel
+	com.samsung.android.bixbyvision.framework
+	com.samsung.android.vision.model
+	com.samsung.android.bixby.ondevice.dede
+	com.samsung.android.bixby.ondevice.engb
+	com.samsung.android.callassistant
+	com.samsung.android.smartcallprovider
+	com.samsung.android.smartface
+	com.samsung.android.smartface.overlay
+	com.samsung.android.sdk.ocr
+	com.samsung.android.aremojieditor
+	com.samsung.android.stickercenter
+	com.samsung.android.app.camera.sticker.facearavatar.preload
+	com.samsung.android.motionphoto.app
+	com.samsung.android.liveeffectservice
+	com.samsung.android.camerasdkservice
+	com.samsung.android.app.dressroom
+	com.samsung.android.app.vex.scanner
+	com.samsung.android.vexfwk.service
+	com.samsung.android.photoremasterservice
+	com.samsung.android.visual.cloudcore
+	com.samsung.android.smartmirroring
+	com.samsung.android.audiomirroring
+	com.samsung.android.allshare.service.mediashare
+	com.samsung.android.mediasearch
+	com.samsung.android.scloud
+	com.samsung.android.storyservice
+	com.samsung.android.mdx
+	com.samsung.android.mdx.kit
+	com.samsung.android.mcfds
+	com.samsung.android.mcfserver
+	com.samsung.android.mcf.autohotspot
+	com.samsung.android.app.sharelive
+	com.sec.android.app.samsungapps
+	com.samsung.android.themestore
+	com.samsung.android.themecenter
+	com.samsung.android.app.updatecenter
+	com.samsung.android.app.tips
+	com.samsung.android.smartsuggestions
+	com.samsung.android.dynamiclock
+	com.samsung.android.wallpaper.live
+	com.samsung.android.gpuwatchapp
+	com.samsung.android.kidsinstaller
+	com.sec.android.app.kidshome
+	com.samsung.android.app.parentalcare
+	com.samsung.android.app.sketchbook
+	com.samsung.android.smartswitchassistant
+	com.sec.android.easyMover
+	com.sec.android.easyMover.Agent
+	com.samsung.android.app.omcagent
+	com.samsung.android.app.voicewakeup
+)
+google_deep=(
+	com.google.android.apps.bard
+	com.google.android.apps.googleapp
+	com.google.android.hotwordenrollment.okgoogle
+	com.google.android.hotwordenrollment.xgoogle
+	com.google.mainline.telemetry
+	com.google.mainline.adservices
+	com.google.android.adservices.api
+	com.google.android.ondevicepersonalization.services
+	com.google.android.apps.restore
+	com.google.android.apps.setupwizard.searchselector
+	com.google.android.projection.gearhead
+	com.google.android.gms.location.history
+	com.google.ar.core
+	com.google.android.glasses.core
+	com.google.android.apps.aiwallpapers
+	com.facebook.system
+	com.facebook.services
+	com.facebook.appmanager
+)
+tier1=(
+	com.android.printspooler
+	com.android.bips
+	com.sec.android.easyonehand
+	com.samsung.knox.securefolder
+	com.sec.android.app.shealth
+	com.android.dreams.basic
+	com.android.dreams.phototable
+	com.samsung.android.app.talkback
+)
+tier2=(com.sec.android.app.launcher com.samsung.android.dialer)
+userpicks=(
+	com.microsoft.office.outlook
+	com.microsoft.skydrive
+	com.linkedin.android
+	com.google.android.gm
+	com.sec.android.gallery3d
+	com.samsung.android.messaging
+	com.sec.android.app.voicenote
+	com.samsung.android.voc
+	com.spotify.music
+	com.google.android.apps.youtube.music
+	com.samsung.android.app.contacts
+	com.sec.android.app.clockpackage
+	com.sec.android.app.camera
+	com.samsung.android.calendar
+	com.sec.android.app.popupcalculator
+	com.android.chrome
+	com.microsoft.office.officehubrow
+	com.microsoft.appmanager
+	com.sec.android.app.myfiles
+)
 disable() {
 	for pkg in "$@"; do
 		case " $keep " in
@@ -19,190 +219,89 @@ disable() {
 	done
 }
 
+restore() { # re-enable / re-install system packages removed by disable()
+	for pkg in "$@"; do
+		if adb shell pm path "$pkg" >/dev/null 2>&1; then
+			adb shell pm enable "$pkg" >/dev/null 2>&1
+			echo "  enabled: $pkg"
+		elif adb shell cmd package install-existing --user 0 "$pkg" >/dev/null 2>&1; then
+			echo "  restored: $pkg"
+		else
+			echo "  not in system: $pkg"
+		fi
+	done
+}
+
+reset() {
+	echo "reset to stock:"
+	echo "restore system apps:"
+	restore "${google[@]}" "${samsung[@]}" "${samsung_deep[@]}" "${google_deep[@]}" "${tier1[@]}" "${userpicks[@]}" "${tier2[@]}"
+	echo "remove foss apps:"
+	for pkg in $(grep -oP '^\tyes_install \K\S+' "$0"); do
+		adb shell pm uninstall --user 0 "$pkg" >/dev/null 2>&1 && echo "  removed: $pkg"
+	done
+	if adb shell pm uninstall --user 0 org.futo.inputmethod.latin >/dev/null 2>&1; then
+		echo "  removed: futo keyboard"
+	fi
+	echo "keyboard:"
+	local svc
+	svc="$(adb shell ime list -s -a 2>/dev/null | tr -d '\r' | grep honeyboard | head -1)"
+	if [ -n "$svc" ]; then
+		adb shell pm enable com.samsung.android.honeyboard >/dev/null 2>&1
+		adb shell ime enable "$svc" >/dev/null 2>&1
+		adb shell ime set "$svc" >/dev/null 2>&1
+		echo "  default: $svc"
+	else
+		echo "  warn: samsung keyboard not available"
+	fi
+	echo "launcher:"
+	if adb shell pm path com.sec.android.app.launcher >/dev/null 2>&1 \
+		|| adb shell cmd package install-existing --user 0 com.sec.android.app.launcher >/dev/null 2>&1; then
+		adb shell pm enable com.sec.android.app.launcher >/dev/null 2>&1
+		adb shell cmd package set-home-activity com.sec.android.app.launcher/com.sec.android.app.launcher.activities.LauncherActivity >/dev/null 2>&1 \
+			|| adb shell cmd package set-home-activity com.sec.android.app.launcher/.activities.LauncherActivity >/dev/null 2>&1
+		echo "  home: one ui"
+	else
+		echo "  warn: one ui home not available"
+	fi
+	echo "settings:"
+	for k in private_dns_mode private_dns_specifier window_animation_scale transition_animation_scale \
+		animator_duration_scale adaptive_battery_management_enabled app_standby_enabled mobile_data_always_on; do
+		adb shell settings delete global "$k" >/dev/null 2>&1
+	done
+	for k in wifi_scan_always_enabled bluetooth_scan_always_enabled lock_screen_lock_after_timeout \
+		location_mode doze_pulse_on_pick_up double_tap_to_wake wake_gesture_enabled aod_mode screensaver_enabled; do
+		adb shell settings delete secure "$k" >/dev/null 2>&1
+	done
+	for k in screen_off_timeout screen_brightness_mode; do
+		adb shell settings delete system "$k" >/dev/null 2>&1
+	done
+	adb shell am set-standby-bucket --user 0 com.samsung.android.kgclient active >/dev/null 2>&1
+	echo "  defaults restored"
+	echo "done"
+}
+
 adb get-state >/dev/null 2>&1 || { echo "phone not connected (adb devices)"; exit 1; }
 
+case "${1:-}" in
+	--reset) reset; exit 0;;
+	*) ;;
+esac
+
 echo "google:"
-disable \
-	com.google.android.googlequicksearchbox \
-	com.google.android.apps.maps \
-	com.google.android.youtube \
-	com.google.android.apps.tachyon \
-	com.google.android.apps.photos \
-	com.google.android.apps.messaging \
-	com.google.android.apps.wellbeing \
-	com.google.android.feedback \
-	com.google.android.apps.googleassistant \
-	com.google.android.videos \
-	com.google.android.apps.subscriptions.red \
-	com.google.android.apps.magazines \
-	com.google.android.play.games \
-	com.google.android.apps.docs \
-	com.google.android.apps.drive \
-	com.google.android.apps.sheets \
-	com.google.android.apps.slides \
-	com.google.android.apps.tasks \
-	com.google.android.apps.keep \
-	com.google.android.apps.translate \
-	com.google.android.apps.walletnfcrel \
-	com.google.android.syncadapters.contacts \
-	com.google.android.syncadapters.calendar
+disable "${google[@]}"
 
 echo "samsung:"
-disable \
-	com.sec.android.app.desktoplauncher \
-	com.samsung.android.bixby.wakeup \
-	com.samsung.android.bixby.vision \
-	com.samsung.android.app.spage \
-	com.samsung.android.visionintelligence \
-	com.samsung.android.bixby.agent \
-	com.samsung.android.bixby.agent.dummy \
-	com.samsung.android.app.routines \
-	com.samsung.android.service.weather \
-	com.samsung.android.mateagent \
-	com.samsung.android.app.smartcapture \
-	com.samsung.android.app.notes \
-	com.samsung.android.samsungpass \
-	com.samsung.android.samsungpassautofill \
-	com.samsung.android.providers.context \
-	com.samsung.android.game.gamehome \
-	com.samsung.android.game.gametools \
-	com.samsung.android.game.gos \
-	com.samsung.android.lool \
-	com.samsung.android.smartswitch \
-	com.samsung.android.mobileservice \
-	com.samsung.android.weather \
-	com.samsung.android.video \
-	com.samsung.android.app.reminder \
-	com.samsung.android.music \
-	com.samsung.android.oneconnect \
-	com.samsung.android.honeyboard \
-	com.samsung.android.svoiceime \
-	com.sec.android.app.sbrowser \
-	com.sec.android.app.billing \
-	com.samsung.ucs.ucsservice \
-	com.samsung.android.aremoji \
-	com.samsung.android.arzone \
-	com.samsung.android.airviewdictionary \
-	com.sec.android.daemonapp
+disable "${samsung[@]}"
 
 echo "samsung deep-clean:"
-disable \
-	com.sec.android.diagmonagent \
-	com.sec.android.soagent \
-	com.sec.android.iaft \
-	com.sec.android.app.personalization \
-	com.sec.android.app.safetyassurance \
-	com.sec.automation \
-	com.sec.bcservice \
-	com.sec.android.sdhms \
-	com.sec.imslogger \
-	com.samsung.slsi.telephony.silentlogging \
-	com.samsung.android.knox.analytics.uploader \
-	com.samsung.android.sm.devicesecurity \
-	com.samsung.android.da.daagent \
-	com.samsung.android.dqagent \
-	com.samsung.android.svcagent \
-	com.samsung.android.mdecservice \
-	com.samsung.android.fast \
-	com.samsung.android.scpm \
-	com.samsung.android.cmh \
-	com.samsung.android.mydevice \
-	com.samsung.android.aware.service \
-	com.samsung.android.beaconmanager \
-	com.samsung.android.location \
-	com.samsung.android.samsungpositioning \
-	com.samsung.android.ipsgeofence \
-	com.samsung.android.mapsagent \
-	com.sec.location.nsflp2 \
-	com.samsung.android.mhs.ai \
-	com.samsung.android.intellivoiceservice \
-	com.samsung.android.sree \
-	com.samsung.android.aicore \
-	com.samsung.android.rubin.app \
-	com.samsung.android.app.interpreter \
-	com.samsung.android.offline.languagemodel \
-	com.samsung.android.bixbyvision.framework \
-	com.samsung.android.vision.model \
-	com.samsung.android.bixby.ondevice.dede \
-	com.samsung.android.bixby.ondevice.engb \
-	com.samsung.android.callassistant \
-	com.samsung.android.smartcallprovider \
-	com.samsung.android.smartface \
-	com.samsung.android.smartface.overlay \
-	com.samsung.android.sdk.ocr \
-	com.samsung.android.aremojieditor \
-	com.samsung.android.stickercenter \
-	com.samsung.android.app.camera.sticker.facearavatar.preload \
-	com.samsung.android.motionphoto.app \
-	com.samsung.android.liveeffectservice \
-	com.samsung.android.camerasdkservice \
-	com.samsung.android.app.dressroom \
-	com.samsung.android.app.vex.scanner \
-	com.samsung.android.vexfwk.service \
-	com.samsung.android.photoremasterservice \
-	com.samsung.android.visual.cloudcore \
-	com.samsung.android.smartmirroring \
-	com.samsung.android.audiomirroring \
-	com.samsung.android.allshare.service.mediashare \
-	com.samsung.android.mediasearch \
-	com.samsung.android.scloud \
-	com.samsung.android.storyservice \
-	com.samsung.android.mdx \
-	com.samsung.android.mdx.kit \
-	com.samsung.android.mcfds \
-	com.samsung.android.mcfserver \
-	com.samsung.android.mcf.autohotspot \
-	com.samsung.android.app.sharelive \
-	com.sec.android.app.samsungapps \
-	com.samsung.android.themestore \
-	com.samsung.android.themecenter \
-	com.samsung.android.app.updatecenter \
-	com.samsung.android.app.tips \
-	com.samsung.android.smartsuggestions \
-	com.samsung.android.dynamiclock \
-	com.samsung.android.wallpaper.live \
-	com.samsung.android.gpuwatchapp \
-	com.samsung.android.kidsinstaller \
-	com.sec.android.app.kidshome \
-	com.samsung.android.app.parentalcare \
-	com.samsung.android.app.sketchbook \
-	com.samsung.android.smartswitchassistant \
-	com.sec.android.easyMover \
-	com.sec.android.easyMover.Agent \
-	com.samsung.android.app.omcagent \
-	com.samsung.android.app.voicewakeup \
+disable "${samsung_deep[@]}"
 
 echo "google deep-clean:"
-disable \
-	com.google.android.apps.bard \
-	com.google.android.apps.googleapp \
-	com.google.android.hotwordenrollment.okgoogle \
-	com.google.android.hotwordenrollment.xgoogle \
-	com.google.mainline.telemetry \
-	com.google.mainline.adservices \
-	com.google.android.adservices.api \
-	com.google.android.ondevicepersonalization.services \
-	com.google.android.apps.restore \
-	com.google.android.apps.setupwizard.searchselector \
-	com.google.android.projection.gearhead \
-	com.google.android.gms.location.history \
-	com.google.ar.core \
-	com.google.android.glasses.core \
-	com.google.android.apps.aiwallpapers \
-	com.facebook.system \
-	com.facebook.services \
-	com.facebook.appmanager
+disable "${google_deep[@]}"
 
 echo "tier 1 (safe extras):"
-disable \
-	com.android.printspooler \
-	com.android.bips \
-	com.sec.android.easyonehand \
-	com.samsung.knox.securefolder \
-	com.sec.android.app.shealth \
-	com.android.dreams.basic \
-	com.android.dreams.phototable \
-	com.samsung.android.app.talkback
+disable "${tier1[@]}"
 
 echo "foss private apps:"
 tmp="$(mktemp -d)"
@@ -313,10 +412,11 @@ if ask "would you like to install these FOSS private apps?"; then
 	yes_install org.cromite.cromite "Cromite" && install_gh uazo/cromite org.cromite.cromite "Cromite" 'arm64_ChromePublic\.apk'
 	yes_install org.ironfoxoss.ironfox "IronFox" && install_ironfox
 	yes_install com.beemdevelopment.aegis "Aegis" && install_gh beemdevelopment/Aegis com.beemdevelopment.aegis "Aegis"
-	yes_install com.x8bit.bitwarden "Bitwarden" && install_gh bitwarden/mobile com.x8bit.bitwarden "Bitwarden" 'com\.x8bit\.bitwarden-fdroid\.apk'
+	yes_install com.kunzisoft.keepass.libre "KeePassDX" && install_fd com.kunzisoft.keepass.libre "KeePassDX"
 	yes_install im.molly.app "Molly" && install_gh mollyim/mollyim-android im.molly.app "Molly"
 	yes_install de.danoeh.antennapod "AntennaPod" && install_fd de.danoeh.antennapod "AntennaPod"
 	yes_install com.aurora.store "Aurora Store" && install_fd com.aurora.store "Aurora Store"
+	yes_install com.machiav3lli.fdroid "Neo Store" && install_gh NeoApplications/Neo-Store com.machiav3lli.fdroid "Neo Store" 'release'
 	yes_install app.zhaobozhen.libre "InnerTune" && install_gh z-huang/InnerTune app.zhaobozhen.libre "InnerTune" 'foss'
 	yes_install com.github.libretube "LibreTube" && install_gh libre-tube/LibreTube com.github.libretube "LibreTube"
 	yes_install com.brouken.player "Just Player" && install_gh moneytoo/Player com.brouken.player "Just Player" '!legacy'
@@ -443,25 +543,6 @@ for ime in $(adb shell ime list -s 2>/dev/null | tr -d '\r'); do
 done
 
 echo "user picks:"
-disable \
-	com.microsoft.office.outlook \
-	com.microsoft.skydrive \
-	com.linkedin.android \
-	com.google.android.gm \
-	com.sec.android.gallery3d \
-	com.samsung.android.messaging \
-	com.sec.android.app.voicenote \
-	com.samsung.android.voc \
-	com.spotify.music \
-	com.google.android.apps.youtube.music \
-	com.samsung.android.app.contacts \
-	com.sec.android.app.clockpackage \
-	com.sec.android.app.camera \
-	com.samsung.android.calendar \
-	com.sec.android.app.popupcalculator \
-	com.android.chrome \
-	com.microsoft.office.officehubrow \
-	com.microsoft.appmanager \
-	com.sec.android.app.myfiles
+disable "${userpicks[@]}"
 
 echo done
