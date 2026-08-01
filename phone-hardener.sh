@@ -283,12 +283,15 @@ reset() {
 	echo "restore system apps:"
 	restore "${google[@]}" "${samsung[@]}" "${samsung_deep[@]}" "${google_deep[@]}" "${tier1[@]}" "${userpicks[@]}" "${tier2[@]}"
 	echo "remove foss apps:"
-	for pkg in $(grep -oP '^\tyes_install \K\S+' "$0"); do
-		adb shell pm uninstall --user 0 "$pkg" >/dev/null 2>&1 && echo "  removed: $pkg"
+	for pkg in $(grep -oP '^\tyes_install \K\S+' "$0") org.futo.inputmethod.latin; do
+		if adb shell pm path "$pkg" >/dev/null 2>&1; then
+			adb shell pm uninstall --user 0 "$pkg" >/dev/null 2>&1
+			adb uninstall "$pkg" >/dev/null 2>&1
+			echo "  removed: $pkg"
+		else
+			echo "  not installed: $pkg"
+		fi
 	done
-	if adb shell pm uninstall --user 0 org.futo.inputmethod.latin >/dev/null 2>&1; then
-		echo "  removed: futo keyboard"
-	fi
 	echo "keyboard:"
 	adb shell pm enable com.samsung.android.honeyboard >/dev/null 2>&1
 	local svc
