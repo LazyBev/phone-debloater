@@ -341,7 +341,6 @@ if ask "would you like to install these FOSS private apps?"; then
 	yes_install org.mozilla.thunderbird "Thunderbird" && install_gh thunderbird/thunderbird-android org.mozilla.thunderbird "Thunderbird"
 	yes_install com.localsend.localsend "LocalSend" && install_gh localsend/localsend com.localsend.localsend "LocalSend" 'arm64v8'
 	yes_install com.pgpony.android "PGPony" && install_fd com.pgpony.android "PGPony"
-	yes_install com.machiav3lli.fdroid "Neo Store" && install_fd com.machiav3lli.fdroid "Neo Store"
 	yes_install com.termux "Termux" && install_gh termux/termux-app com.termux "Termux"
 	yes_install com.valhalla.thor "Thor App Manager" && install_gh trinadhthatakula/Thor com.valhalla.thor "Thor App Manager" 'foss-release'
 else
