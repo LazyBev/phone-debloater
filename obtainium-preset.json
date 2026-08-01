@@ -10,17 +10,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Aegis"
-   },
+   "additionalSettings": "{\"appName\": \"Aegis\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -37,17 +30,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "AntennaPod"
-   },
+   "additionalSettings": "{\"appName\": \"AntennaPod\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -64,17 +50,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Aurora Store"
-   },
+   "additionalSettings": "{\"appName\": \"Aurora Store\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -91,17 +70,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Aves Gallery"
-   },
+   "additionalSettings": "{\"appName\": \"Aves Gallery\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -118,17 +90,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Bitwarden"
-   },
+   "additionalSettings": "{\"appName\": \"Bitwarden\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -145,17 +110,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Breezy Weather"
-   },
+   "additionalSettings": "{\"appName\": \"Breezy Weather\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -172,17 +130,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Cromite"
-   },
+   "additionalSettings": "{\"appName\": \"Cromite\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -199,17 +150,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Firefox Focus"
-   },
+   "additionalSettings": "{\"appName\": \"Firefox Focus\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -226,17 +170,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Fossify Calculator"
-   },
+   "additionalSettings": "{\"appName\": \"Fossify Calculator\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -253,17 +190,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Fossify Calendar"
-   },
+   "additionalSettings": "{\"appName\": \"Fossify Calendar\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -280,17 +210,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Fossify Clock"
-   },
+   "additionalSettings": "{\"appName\": \"Fossify Clock\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -307,17 +230,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Fossify Contacts"
-   },
+   "additionalSettings": "{\"appName\": \"Fossify Contacts\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -334,17 +250,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Fossify Notes"
-   },
+   "additionalSettings": "{\"appName\": \"Fossify Notes\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -361,17 +270,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "FUTO Keyboard"
-   },
+   "additionalSettings": "{\"appName\": \"FUTO Keyboard\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -388,17 +290,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "InnerTune"
-   },
+   "additionalSettings": "{\"appName\": \"InnerTune\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -415,17 +310,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Just Player"
-   },
+   "additionalSettings": "{\"appName\": \"Just Player\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -442,17 +330,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "LibreTube"
-   },
+   "additionalSettings": "{\"appName\": \"LibreTube\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -469,17 +350,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "LocalSend"
-   },
+   "additionalSettings": "{\"appName\": \"LocalSend\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -496,17 +370,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Material Files"
-   },
+   "additionalSettings": "{\"appName\": \"Material Files\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -523,17 +390,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Molly"
-   },
+   "additionalSettings": "{\"appName\": \"Molly\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -550,17 +410,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Mull"
-   },
+   "additionalSettings": "{\"appName\": \"Mull\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -577,17 +430,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "NetGuard"
-   },
+   "additionalSettings": "{\"appName\": \"NetGuard\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -604,17 +450,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Open Camera"
-   },
+   "additionalSettings": "{\"appName\": \"Open Camera\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -631,17 +470,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Organic Maps"
-   },
+   "additionalSettings": "{\"appName\": \"Organic Maps\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -658,17 +490,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Proton Drive"
-   },
+   "additionalSettings": "{\"appName\": \"Proton Drive\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -685,17 +510,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Proton Mail"
-   },
+   "additionalSettings": "{\"appName\": \"Proton Mail\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -712,17 +530,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Proton Pass"
-   },
+   "additionalSettings": "{\"appName\": \"Proton Pass\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -739,17 +550,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Proton VPN"
-   },
+   "additionalSettings": "{\"appName\": \"Proton VPN\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -766,17 +570,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "QKSMS"
-   },
+   "additionalSettings": "{\"appName\": \"QKSMS\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -793,17 +590,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Seal"
-   },
+   "additionalSettings": "{\"appName\": \"Seal\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -820,17 +610,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Syncthing"
-   },
+   "additionalSettings": "{\"appName\": \"Syncthing\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -847,17 +630,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Termux"
-   },
+   "additionalSettings": "{\"appName\": \"Termux\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -874,18 +650,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Thor App Manager",
-    "apkFilterRegEx": "foss-release"
-   },
+   "additionalSettings": "{\"appName\": \"Thor App Manager\", \"apkFilterRegEx\": \"foss-release\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -902,17 +670,10 @@
    "name": "",
    "installedVersion": null,
    "latestVersion": "unknown",
-   "apkUrls": [
-    [
-     "placeholder",
-     "placeholder"
-    ]
-   ],
-   "otherAssetUrls": [],
+   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
+   "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": {
-    "appName": "Thunderbird"
-   },
+   "additionalSettings": "{\"appName\": \"Thunderbird\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
