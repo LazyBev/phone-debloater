@@ -25,7 +25,7 @@
   },
   {
    "id": "de.danoeh.antennapod",
-   "url": "https://github.com/AntennaPod/AntennaPod",
+   "url": "https://f-droid.org/packages/de.danoeh.antennapod",
    "author": "",
    "name": "",
    "installedVersion": null,
@@ -65,7 +65,7 @@
   },
   {
    "id": "com.deckerst.aves",
-   "url": "https://github.com/deutscher/Aves",
+   "url": "https://github.com/deckerst/aves",
    "author": "",
    "name": "",
    "installedVersion": null,
@@ -265,7 +265,7 @@
   },
   {
    "id": "org.futo.inputmethod.latin",
-   "url": "https://github.com/futo-org/futo-ime",
+   "url": "https://github.com/futo-org/android-keyboard",
    "author": "",
    "name": "",
    "installedVersion": null,
@@ -325,7 +325,7 @@
   },
   {
    "id": "com.github.libretube",
-   "url": "https://github.com/libretube/libretube",
+   "url": "https://github.com/libre-tube/LibreTube",
    "author": "",
    "name": "",
    "installedVersion": null,
@@ -404,8 +404,8 @@
    "pendingRepoRenameUrl": null
   },
   {
-   "id": "us.spotco.fennec_dos",
-   "url": "https://f-droid.org/packages/us.spotco.fennec_dos",
+   "id": "org.mozilla.fennec_fdroid",
+   "url": "https://f-droid.org/packages/org.mozilla.fennec_fdroid",
    "author": "",
    "name": "",
    "installedVersion": null,
@@ -413,7 +413,7 @@
    "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
    "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": "{\"appName\": \"Mull\"}",
+   "additionalSettings": "{\"appName\": \"Firefox (Fennec)\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
@@ -445,7 +445,7 @@
   },
   {
    "id": "net.sourceforge.opencamera",
-   "url": "https://github.com/almalence/OpenCamera",
+   "url": "https://f-droid.org/packages/net.sourceforge.opencamera",
    "author": "",
    "name": "",
    "installedVersion": null,
@@ -524,8 +524,8 @@
    "pendingRepoRenameUrl": null
   },
   {
-   "id": "com.protonvpn.android.pass",
-   "url": "https://github.com/ProtonPass/android-pass",
+   "id": "proton.android.pass.fdroid",
+   "url": "https://f-droid.org/packages/proton.android.pass.fdroid",
    "author": "",
    "name": "",
    "installedVersion": null,
