@@ -299,6 +299,28 @@ restore() { # re-enable / re-install system packages removed by disable()
 	done
 }
 
+np_uid() { # package -> uid (empty if not installed for user 0)
+	adb shell pm list packages -U 2>/dev/null | tr -d '\r' | \
+		sed -n "s/^package:$1.*uid:\\([0-9]*\\).*/\\1/p" | head -1
+}
+
+np_add() { # package: restrict background data
+	local uid
+	uid="$(np_uid "$1")"
+	if [ -n "$uid" ]; then
+		adb shell cmd netpolicy add restrict-background-blacklist "$uid" >/dev/null 2>&1 \
+			&& echo "  restrict-background: $1 (uid $uid)"
+	else
+		echo "  skip $1 (not installed)"
+	fi
+}
+
+np_rm() { # package: remove from background-data blacklist
+	local uid
+	uid="$(np_uid "$1")"
+	[ -n "$uid" ] && adb shell cmd netpolicy remove restrict-background-blacklist "$uid" >/dev/null 2>&1
+}
+
 reset() {
 	echo "reset to stock:"
 	echo "restore system apps:"
@@ -367,8 +389,9 @@ reset() {
 	adb shell cmd package install-existing --user 0 com.android.vending >/dev/null 2>&1
 	for p in com.facebook.appmanager com.facebook.services com.facebook.system \
 		com.google.android.adservices.api com.samsung.android.da.daagent \
-		com.samsung.android.dqagent com.samsung.android.knox.analytics.uploader; do
-		adb shell cmd netpolicy remove restrict-background blacklist "$p" >/dev/null 2>&1
+		com.samsung.android.dqagent com.samsung.android.knox.analytics.uploader \
+		com.google.android.gms; do
+		np_rm "$p"
 	done
 	echo "  defaults restored"
 	if [ ${#missing_pkgs[@]} -gt 0 ]; then
@@ -511,6 +534,14 @@ privacy_check() { # audit current posture: settings, vpn, packages
 		echo "  present"
 	else
 		echo "  removed (aurora/f-droid only)"
+	fi
+	echo "accounts:"
+	local accts
+	accts="$(adb shell dumpsys account 2>/dev/null | tr -d '\r' | grep -oE 'type=[a-zA-Z0-9_.]+' | cut -d= -f2 | sort -u)"
+	if [ -n "$accts" ]; then
+		echo "$accts" | sed 's/^/  signed in: /'
+	else
+		echo "  none detected"
 	fi
 }
 
@@ -732,8 +763,8 @@ if ask "would you like to install these FOSS private apps?"; then
 	yes_install ch.protonmail.android "Proton Mail" && install_gh ProtonMail/proton-mail-android ch.protonmail.android "Proton Mail"
 	yes_install proton.android.pass.fdroid "Proton Pass" && install_fd proton.android.pass.fdroid "Proton Pass"
 	yes_install me.proton.android.drive "Proton Drive" && install_gh ProtonDriveApps/android-drive me.proton.android.drive "Proton Drive"
-	yes_install com.protonvpn.android "Proton VPN" && install_gh ProtonVPN/android-app com.protonvpn.android "Proton VPN"
-	yes_install com.moez.QKSMS "QUIK" && install_gh quik-sms/quik dev.octoshrimpy.quik.fdroid "QUIK" 'fdroid'
+	yes_install ch.protonvpn.android "Proton VPN" && install_gh ProtonVPN/android-app ch.protonvpn.android "Proton VPN"
+	yes_install dev.octoshrimpy.quik.fdroid "QUIK" && install_gh quik-sms/quik dev.octoshrimpy.quik.fdroid "QUIK" 'fdroid'
 	yes_install org.mozilla.thunderbird "Thunderbird" && install_gh thunderbird/thunderbird-android org.mozilla.thunderbird "Thunderbird"
 	yes_install com.localsend.localsend "LocalSend" && install_gh localsend/localsend com.localsend.localsend "LocalSend" 'arm64v8'
 	yes_install com.pgpony.android "PGPony" && install_fd com.pgpony.android "PGPony"
@@ -747,7 +778,7 @@ else
 fi
 
 echo "vpn kill-switch:"
-if adb shell pm path com.protonvpn.android >/dev/null 2>&1; then
+if adb shell pm path ch.protonvpn.android >/dev/null 2>&1; then
 	r=n
 	if [ "$ACCEPT_ALL" = 1 ]; then
 		r=y
@@ -757,7 +788,7 @@ if adb shell pm path com.protonvpn.android >/dev/null 2>&1; then
 	fi
 	case "$r" in
 		y|Y|yes|YES)
-			adb shell settings put global always_on_vpn_package com.protonvpn.android
+			adb shell settings put global always_on_vpn_package ch.protonvpn.android
 			adb shell settings put global always_on_vpn_lockdown 1
 			echo "  always-on vpn + lockdown enabled (blocks all non-vpn traffic)"
 			;;
@@ -830,16 +861,19 @@ echo "settings applied (dns, scanning off, 60s timeout, location off, lock-scree
 
 echo "gms (google play services) lockdown:"
 gms_uid="$(adb shell pm list packages -U 2>/dev/null | tr -d '\r' | sed -n 's/^package:com.google.android.gms.*uid:\([0-9]*\).*/\1/p' | head -1)"
-if [ -n "$gms_uid" ]; then
-	for op in CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION \
-		READ_CONTACTS WRITE_CONTACTS READ_CALL_LOG WRITE_CALL_LOG \
-		READ_SMS WRITE_SMS RECEIVE_SMS SEND_SMS BODY_SENSORS ACTIVITY_RECOGNITION; do
-		adb shell cmd appops set --uid "$gms_uid" "$op" deny >/dev/null 2>&1
-	done
-	echo "  denied sensitive app-ops for gms (uid $gms_uid); push/network untouched"
-else
-	echo "  skip (gms not present)"
-fi
+	if [ -n "$gms_uid" ]; then
+		for op in CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION \
+			READ_CONTACTS WRITE_CONTACTS READ_CALL_LOG WRITE_CALL_LOG \
+			READ_SMS WRITE_SMS RECEIVE_SMS SEND_SMS BODY_SENSORS ACTIVITY_RECOGNITION \
+			READ_CLIPBOARD READ_PHONE_STATE GET_ACCOUNTS; do
+			adb shell cmd appops set --uid "$gms_uid" "$op" deny >/dev/null 2>&1
+		done
+		adb shell cmd netpolicy add restrict-background-blacklist "$gms_uid" >/dev/null 2>&1 \
+			&& echo "  background-data restricted for gms"
+		echo "  denied sensitive app-ops for gms (uid $gms_uid); push/network untouched"
+	else
+		echo "  skip (gms not present)"
+	fi
 
 echo "play store (com.android.vending) lockdown:"
 vending_uid="$(adb shell pm list packages -U 2>/dev/null | tr -d '\r' | sed -n 's/^package:com.android.vending.*uid:\([0-9]*\).*/\1/p' | head -1)"
@@ -892,12 +926,7 @@ echo "background-data restriction (netpolicy blacklist, applied only if present)
 for p in com.facebook.appmanager com.facebook.services com.facebook.system \
 	com.google.android.adservices.api com.samsung.android.da.daagent \
 	com.samsung.android.dqagent com.samsung.android.knox.analytics.uploader; do
-	if adb shell pm path "$p" >/dev/null 2>&1; then
-		adb shell cmd netpolicy add restrict-background blacklist "$p" >/dev/null 2>&1 \
-			&& echo "  restrict-background: $p"
-	else
-		echo "  skip $p (not installed)"
-	fi
+	np_add "$p"
 done
 
 echo "performance:"
