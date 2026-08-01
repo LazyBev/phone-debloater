@@ -1,343 +1,926 @@
-[
- {
-  "label": "Aegis",
-  "id": "com.beemdevelopment.aegis",
-  "source": "github",
-  "source_info": "beemdevelopment/Aegis",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "2FA authenticator; encrypted vault, offline"
- },
- {
-  "label": "AntennaPod",
-  "id": "de.danoeh.antennapod",
-  "source": "github",
-  "source_info": "AntennaPod/AntennaPod",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Podcasts, open source"
- },
- {
-  "label": "Aurora Store",
-  "id": "com.aurora.store",
-  "source": "f-droid",
-  "source_info": "com.aurora.store",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Anonymous Play Store client; download apps without a Google account"
- },
- {
-  "label": "Aves Gallery",
-  "id": "com.deckerst.aves",
-  "source": "github",
-  "source_info": "deutscher/Aves",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Gallery replacement; metadata-aware, no cloud hooks"
- },
- {
-  "label": "Bitwarden",
-  "id": "com.x8bit.bitwarden",
-  "source": "github",
-  "source_info": "bitwarden/mobile",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Password manager"
- },
- {
-  "label": "Breezy Weather",
-  "id": "com.breezyweather",
-  "source": "github",
-  "source_info": "breezy-weather/breezy-weather",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Weather; pick a privacy-respecting data source"
- },
- {
-  "label": "Cromite",
-  "id": "org.cromite.cromite",
-  "source": "github",
-  "source_info": "uazo/cromite",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Chromium without Google tracking; ad/tracker blocking built in"
- },
- {
-  "label": "Firefox Focus",
-  "id": "org.mozilla.focus",
-  "source": "github",
-  "source_info": "mozilla-mobile/focus-android",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Throwaway tab-by-tab browser; erases session per tab"
- },
- {
-  "label": "Fossify Calculator",
-  "id": "com.fossify.calculator",
-  "source": "github",
-  "source_info": "fossifyorg/Calculator",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Calculator replacement, offline"
- },
- {
-  "label": "Fossify Calendar",
-  "id": "com.fossify.calendar",
-  "source": "github",
-  "source_info": "fossifyorg/Calendar",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Calendar replacement, offline"
- },
- {
-  "label": "Fossify Clock",
-  "id": "com.fossify.clock",
-  "source": "github",
-  "source_info": "fossifyorg/Clock",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Alarm/clock replacement, offline"
- },
- {
-  "label": "Fossify Contacts",
-  "id": "com.fossify.contacts",
-  "source": "github",
-  "source_info": "fossifyorg/Contacts",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Contacts replacement, offline"
- },
- {
-  "label": "Fossify Notes",
-  "id": "com.fossify.notes",
-  "source": "github",
-  "source_info": "fossifyorg/Notes",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Notes replacement, offline"
- },
- {
-  "label": "FUTO Keyboard",
-  "id": "org.futo.inputmethod.latin",
-  "source": "github",
-  "source_info": "futo-org/futo-ime",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Open-source keyboard; offline speech dictation"
- },
- {
-  "label": "InnerTune",
-  "id": "app.zhaobozhen.libre",
-  "source": "github",
-  "source_info": "z-huang/InnerTune",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "YouTube Music client without Google; downloads"
- },
- {
-  "label": "Just Player",
-  "id": "com.brouken.player",
-  "source": "github",
-  "source_info": "moneytoo/Player",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Video player, minimal and ad-free"
- },
- {
-  "label": "LibreTube",
-  "id": "com.github.libretube",
-  "source": "github",
-  "source_info": "libretube/libretube",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "YouTube client without Google; NewPipe extractor, sponsorblock"
- },
- {
-  "label": "LocalSend",
-  "id": "com.localsend.localsend",
-  "source": "github",
-  "source_info": "localsend/localsend",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "AirDrop-style file transfer; no account"
- },
- {
-  "label": "Material Files",
-  "id": "me.zhanghai.android.files",
-  "source": "github",
-  "source_info": "zhanghai/MaterialFiles",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "File manager replacement, no permissions by default"
- },
- {
-  "label": "Molly",
-  "id": "im.molly.app",
-  "source": "github",
-  "source_info": "mollyim/mollyim-android",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Hardened Signal fork: no Google Services, passphrase-protected key store, per-call network isolation"
- },
- {
-  "label": "Mull",
-  "id": "us.spotco.fennec_dos",
-  "source": "f-droid",
-  "source_info": "us.spotco.fennec_dos",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Firefox with all Mozilla telemetry stripped"
- },
- {
-  "label": "NetGuard",
-  "id": "eu.faircode.netguard",
-  "source": "github",
-  "source_info": "M66B/NetGuard",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Per-app firewall (local VPN, no root)"
- },
- {
-  "label": "Open Camera",
-  "id": "net.sourceforge.opencamera",
-  "source": "github",
-  "source_info": "almalence/OpenCamera",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Camera replacement; no network permission at all"
- },
- {
-  "label": "Organic Maps",
-  "id": "app.organicmaps",
-  "source": "github",
-  "source_info": "organicmaps/organicmaps",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Offline maps; no account, no tracking"
- },
- {
-  "label": "Proton Drive",
-  "id": "me.proton.android.drive",
-  "source": "github",
-  "source_info": "ProtonDriveApps/android-drive",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "E2E-encrypted cloud files"
- },
- {
-  "label": "Proton Mail",
-  "id": "ch.protonmail.android",
-  "source": "github",
-  "source_info": "ProtonMail/proton-mail-android",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "E2E-encrypted email"
- },
- {
-  "label": "Proton Pass",
-  "id": "com.protonvpn.android.pass",
-  "source": "github",
-  "source_info": "ProtonPass/android-pass",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Password manager under the same E2E-encrypted Proton account"
- },
- {
-  "label": "Proton VPN",
-  "id": "com.protonvpn.android",
-  "source": "github",
-  "source_info": "ProtonVPN/android-app",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "WireGuard/OpenVPN via Proton; free tier"
- },
- {
-  "label": "QKSMS",
-  "id": "com.moez.QKSMS",
-  "source": "github",
-  "source_info": "moezbhatti/qksms",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "SMS replacement; encrypted backup, no ads"
- },
- {
-  "label": "Seal",
-  "id": "com.junkfood.seal",
-  "source": "github",
-  "source_info": "JunkFood02/Seal",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "yt-dlp GUI for downloading media"
- },
- {
-  "label": "Syncthing",
-  "id": "com.nutomic.syncthingandroid",
-  "source": "github",
-  "source_info": "syncthing/syncthing-android",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Self-hosted file sync; no cloud"
- },
- {
-  "label": "Termux",
-  "id": "com.termux",
-  "source": "github",
-  "source_info": "termux/termux-app",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "Terminal emulator"
- },
- {
-  "label": "Thor App Manager",
-  "id": "com.valhalla.thor",
-  "source": "github",
-  "source_info": "trinadhthatakula/Thor",
-  "track_only": false,
-  "version_code": "Latest",
-  "filter_regex": "foss-release",
-  "use_integrations": true,
-  "note": "App manager/installer (root, Shizuku, Dhizuku): freeze, suspend, uninstall, batch reinstall, fix store"
- },
- {
-  "label": "Thunderbird",
-  "id": "org.mozilla.thunderbird",
-  "source": "github",
-  "source_info": "thunderbird/thunderbird-android",
-  "track_only": false,
-  "version_code": "Latest",
-  "use_integrations": true,
-  "note": "E2E-capable email (OpenPGP via add-on); handles any provider"
- }
-]
+{
+ "schemaVersion": 2,
+ "exportedAt": "2026-08-01T15:10:00.000Z",
+ "appVersion": "1.6.10",
+ "apps": [
+  {
+   "id": "com.beemdevelopment.aegis",
+   "url": "https://github.com/beemdevelopment/Aegis",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Aegis"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "de.danoeh.antennapod",
+   "url": "https://github.com/AntennaPod/AntennaPod",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "AntennaPod"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "com.aurora.store",
+   "url": "https://f-droid.org/packages/com.aurora.store",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Aurora Store"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "com.deckerst.aves",
+   "url": "https://github.com/deutscher/Aves",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Aves Gallery"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "com.x8bit.bitwarden",
+   "url": "https://github.com/bitwarden/mobile",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Bitwarden"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "com.breezyweather",
+   "url": "https://github.com/breezy-weather/breezy-weather",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Breezy Weather"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "org.cromite.cromite",
+   "url": "https://github.com/uazo/cromite",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Cromite"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "org.mozilla.focus",
+   "url": "https://github.com/mozilla-mobile/focus-android",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Firefox Focus"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "com.fossify.calculator",
+   "url": "https://github.com/fossifyorg/Calculator",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Fossify Calculator"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "com.fossify.calendar",
+   "url": "https://github.com/fossifyorg/Calendar",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Fossify Calendar"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "com.fossify.clock",
+   "url": "https://github.com/fossifyorg/Clock",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Fossify Clock"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "com.fossify.contacts",
+   "url": "https://github.com/fossifyorg/Contacts",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Fossify Contacts"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "com.fossify.notes",
+   "url": "https://github.com/fossifyorg/Notes",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Fossify Notes"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "org.futo.inputmethod.latin",
+   "url": "https://github.com/futo-org/futo-ime",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "FUTO Keyboard"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "app.zhaobozhen.libre",
+   "url": "https://github.com/z-huang/InnerTune",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "InnerTune"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "com.brouken.player",
+   "url": "https://github.com/moneytoo/Player",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Just Player"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "com.github.libretube",
+   "url": "https://github.com/libretube/libretube",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "LibreTube"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "com.localsend.localsend",
+   "url": "https://github.com/localsend/localsend",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "LocalSend"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "me.zhanghai.android.files",
+   "url": "https://github.com/zhanghai/MaterialFiles",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Material Files"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "im.molly.app",
+   "url": "https://github.com/mollyim/mollyim-android",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Molly"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "us.spotco.fennec_dos",
+   "url": "https://f-droid.org/packages/us.spotco.fennec_dos",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Mull"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "eu.faircode.netguard",
+   "url": "https://github.com/M66B/NetGuard",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "NetGuard"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "net.sourceforge.opencamera",
+   "url": "https://github.com/almalence/OpenCamera",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Open Camera"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "app.organicmaps",
+   "url": "https://github.com/organicmaps/organicmaps",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Organic Maps"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "me.proton.android.drive",
+   "url": "https://github.com/ProtonDriveApps/android-drive",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Proton Drive"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "ch.protonmail.android",
+   "url": "https://github.com/ProtonMail/proton-mail-android",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Proton Mail"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "com.protonvpn.android.pass",
+   "url": "https://github.com/ProtonPass/android-pass",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Proton Pass"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "com.protonvpn.android",
+   "url": "https://github.com/ProtonVPN/android-app",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Proton VPN"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "com.moez.QKSMS",
+   "url": "https://github.com/moezbhatti/qksms",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "QKSMS"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "com.junkfood.seal",
+   "url": "https://github.com/JunkFood02/Seal",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Seal"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "com.nutomic.syncthingandroid",
+   "url": "https://github.com/syncthing/syncthing-android",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Syncthing"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "com.termux",
+   "url": "https://github.com/termux/termux-app",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Termux"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "com.valhalla.thor",
+   "url": "https://github.com/trinadhthatakula/Thor",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Thor App Manager",
+    "apkFilterRegEx": "foss-release"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  },
+  {
+   "id": "org.mozilla.thunderbird",
+   "url": "https://github.com/thunderbird/thunderbird-android",
+   "author": "",
+   "name": "",
+   "installedVersion": null,
+   "latestVersion": "unknown",
+   "apkUrls": [
+    [
+     "placeholder",
+     "placeholder"
+    ]
+   ],
+   "otherAssetUrls": [],
+   "preferredApkIndex": 0,
+   "additionalSettings": {
+    "appName": "Thunderbird"
+   },
+   "lastUpdateCheck": null,
+   "pinned": false,
+   "categories": [],
+   "releaseDate": null,
+   "changeLog": null,
+   "overrideSource": null,
+   "allowIdChange": false,
+   "pendingRepoRenameUrl": null
+  }
+ ]
+}
