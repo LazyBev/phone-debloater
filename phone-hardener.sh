@@ -80,7 +80,6 @@ samsung=(
 	com.samsung.android.app.reminder
 	com.samsung.android.music
 	com.samsung.android.oneconnect
-	com.samsung.android.honeyboard
 	com.samsung.android.svoiceime
 	com.sec.android.app.sbrowser
 	com.sec.android.app.billing
@@ -527,13 +526,14 @@ yes_install() { # id name
 	fi
 	return 1
 }
-foss_count=38
+foss_count=39
 YESALL=0
 echo "  $foss_count apps:"
 if ask "would you like to install these FOSS private apps?"; then
 	adb shell settings put global verifier_verify_adb_installs 0 >/dev/null 2>&1
 	adb shell settings put global verifier_verify_installs 0 >/dev/null 2>&1
 	echo "  (package verifier disabled for installs; re-enabled in settings section)"
+	yes_install helium314.keyboard "HeliBoard" && install_fd helium314.keyboard "HeliBoard"
 	yes_install com.fossify.phone "Fossify Phone" && install_gh FossifyOrg/Phone com.fossify.phone "Fossify Phone"
 	yes_install fr.neamar.kiss "KISS Launcher" && install_fd fr.neamar.kiss "KISS Launcher"
 	yes_install org.cromite.cromite "Cromite" && install_gh uazo/cromite org.cromite.cromite "Cromite" 'arm64_ChromePublic\.apk'
@@ -609,6 +609,15 @@ if [ "$tier" -ge 3 ]; then
 		disable com.samsung.android.dialer
 	else
 		echo "  skip samsung dialer (fossify phone not installed)"
+	fi
+	kb="$(adb shell ime list -s -a 2>/dev/null | tr -d '\r' | grep '^helium314.keyboard' | head -1)"
+	if [ -n "$kb" ]; then
+		disable com.samsung.android.honeyboard
+		adb shell ime enable "$kb" >/dev/null 2>&1
+		adb shell ime set "$kb" >/dev/null 2>&1
+		echo "  default keyboard -> HeliBoard (honeyboard disabled)"
+	else
+		echo "  skip keyboard swap (HeliBoard not installed)"
 	fi
 fi
 
