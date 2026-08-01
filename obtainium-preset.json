@@ -133,7 +133,7 @@
    "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
    "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": "{\"appName\": \"Cromite\"}",
+   "additionalSettings": "{\"appName\": \"Cromite\", \"apkFilterRegEx\": \"arm64_ChromePublic.apk\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
