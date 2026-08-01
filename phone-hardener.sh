@@ -4,14 +4,29 @@ reset=0
 ACCEPT_ALL=0
 scan=0
 help=0
-for arg in "$@"; do
-	case "$arg" in
+tier=4
+while [ "$#" -gt 0 ]; do
+	case "$1" in
 		--help|-h) help=1;;
 		--reset) reset=1;;
 		--accept-all|-y) ACCEPT_ALL=1;;
 		--scan) scan=1;;
+		--tier)
+			case "${2:-}" in
+				1|2|3|4) tier="$2"; shift;;
+				*) echo "invalid --tier: ${2:-} (use 1-4)"; exit 1;;
+			esac
+			;;
+		--tier=*) tier="${1#--tier=}";;
+		--tier[1-4]) tier="${1#--tier}";;
+		*) echo "unknown option: $1 (see --help)"; exit 1;;
 	esac
+	shift
 done
+case "$tier" in
+	1|2|3|4) : ;;
+	*) echo "invalid tier: $tier (use 1-4)"; exit 1;;
+esac
 keep="com.google.android.gms com.google.android.gsf com.google.android.gsf.login com.android.vending"
 google=(
 	com.google.android.googlequicksearchbox
@@ -343,6 +358,8 @@ installs foss replacements, hardens privacy settings.
 
 options:
   --accept-all|-y   auto-yes every prompt (incl. app installs, lockdowns)
+  --tier N          debloat depth 1-4 (1=google+samsung, 2=+deep-clean,
+                    3=+safe extras/launcher+dialer swap/user picks, 4=all)
   --reset           undo everything: restore apps, settings, default keyboard
   --scan            list preinstalled packages not covered by this script
   --help|-h         show this help
@@ -385,20 +402,23 @@ if [ "$scan" = 1 ]; then
 	exit 0
 fi
 
-echo "google:"
-disable "${google[@]}"
-
-echo "samsung:"
-disable "${samsung[@]}"
-
-echo "samsung deep-clean:"
-disable "${samsung_deep[@]}"
-
-echo "google deep-clean:"
-disable "${google_deep[@]}"
-
-echo "tier 1 (safe extras):"
-disable "${tier1[@]}"
+echo "tier $tier debloat:"
+if [ "$tier" -ge 1 ]; then
+	echo "google:"
+	disable "${google[@]}"
+	echo "samsung:"
+	disable "${samsung[@]}"
+fi
+if [ "$tier" -ge 2 ]; then
+	echo "samsung deep-clean:"
+	disable "${samsung_deep[@]}"
+	echo "google deep-clean:"
+	disable "${google_deep[@]}"
+fi
+if [ "$tier" -ge 3 ]; then
+	echo "tier 3 extras:"
+	disable "${tier1[@]}"
+fi
 
 echo "foss private apps:"
 tmp="$(mktemp -d)"
@@ -568,17 +588,19 @@ else
 fi
 # manual apps (play-store only, not on f-droid): cloudflare 1.1.1.1 warp vpn (com.cloudflare.onedotonedotonedotone)
 
-echo "tier 2 (removals):"
-if adb shell pm path fr.neamar.kiss >/dev/null 2>&1; then
-	disable com.sec.android.app.launcher
-	adb shell cmd package set-home-activity fr.neamar.kiss/fr.neamar.kiss.MainActivity >/dev/null 2>&1 || true
-else
-	echo "  skip One UI Home (kiss launcher not installed)"
-fi
-if adb shell pm path com.fossify.phone >/dev/null 2>&1; then
-	disable com.samsung.android.dialer
-else
-	echo "  skip samsung dialer (fossify phone not installed)"
+if [ "$tier" -ge 3 ]; then
+	echo "tier 3 removals (launcher/dialer swap):"
+	if adb shell pm path fr.neamar.kiss >/dev/null 2>&1; then
+		disable com.sec.android.app.launcher
+		adb shell cmd package set-home-activity fr.neamar.kiss/fr.neamar.kiss.MainActivity >/dev/null 2>&1 || true
+	else
+		echo "  skip One UI Home (kiss launcher not installed)"
+	fi
+	if adb shell pm path com.fossify.phone >/dev/null 2>&1; then
+		disable com.samsung.android.dialer
+	else
+		echo "  skip samsung dialer (fossify phone not installed)"
+	fi
 fi
 
 echo "settings:"
@@ -715,8 +737,10 @@ for ime in $(adb shell ime list -s 2>/dev/null | tr -d '\r'); do
 	esac
 done
 
-echo "user picks:"
-disable "${userpicks[@]}"
+if [ "$tier" -ge 3 ]; then
+	echo "user picks:"
+	disable "${userpicks[@]}"
+fi
 
 echo "final lock-down:"
 r=n
