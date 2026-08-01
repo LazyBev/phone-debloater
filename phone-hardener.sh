@@ -6,10 +6,13 @@ disable() {
 		case " $keep " in
 			*" $pkg "*) echo "  keep: $pkg"; continue ;;
 		esac
-		if adb shell pm uninstall --user 0 "$pkg" >/dev/null 2>&1; then
+		if ! adb shell pm path "$pkg" >/dev/null 2>&1; then
+			echo "  not installed: $pkg"
+		elif adb shell pm uninstall --user 0 "$pkg" >/dev/null 2>&1 \
+			&& ! adb shell pm path "$pkg" >/dev/null 2>&1; then
 			echo "  uninstalled: $pkg"
 		elif adb shell pm disable-user --user 0 "$pkg" >/dev/null 2>&1; then
-			echo "  disabled (not uninstallable): $pkg"
+			echo "  disabled: $pkg"
 		else
 			echo "  skip: $pkg"
 		fi
