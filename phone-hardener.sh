@@ -438,6 +438,7 @@ ask() {
 	done
 }
 install_apk() { # file name
+	echo "    installing $2 (may take a minute)..."
 	if adb install -r "$1" >/dev/null 2>&1; then
 		echo "    installed $2"
 	else
@@ -445,12 +446,14 @@ install_apk() { # file name
 	fi
 }
 install_fd() { # id name
+	echo "    fetching $2 from f-droid... "
 	local vc
 	vc="$(curl -fsSL --max-time 30 "https://f-droid.org/api/v1/packages/$1" | python3 -c 'import json,sys; print(json.load(sys.stdin)["suggestedVersionCode"])' 2>/dev/null)"
-	[ -n "$vc" ] && curl -sL --max-time 300 -o "$tmp/$1.apk" "https://f-droid.org/repo/${1}_${vc}.apk"
+	[ -n "$vc" ] && echo "    downloading ${1}_${vc}.apk..." && curl -sL --progress-bar --max-time 300 -o "$tmp/$1.apk" "https://f-droid.org/repo/${1}_${vc}.apk"
 	[ -f "$tmp/$1.apk" ] && install_apk "$tmp/$1.apk" "$2" || echo "    FAILED $2 (fetch)"
 }
 install_gh() { # repo id name [filter]
+	echo "    fetching release info for $1..."
 	local rel pick
 	rel="$(gh api "repos/$1/releases/latest" -q '{tag: .tag_name, assets: [.assets[].name]} | @json' 2>/dev/null)"
 	if [ -z "$rel" ]; then
@@ -486,13 +489,15 @@ else:
 ' "${4:-}")" || { echo "    FAILED ${4:-} (no matching apk)"; return; }
 	local tag apk
 	tag="${pick%%$'\n'*}"; apk="${pick#*$'\n'}"
-	if curl -sL --max-time 300 -o "$tmp/$2.apk" "https://github.com/$1/releases/download/$tag/$apk"; then
+	echo "    downloading $apk ($tag)..."
+	if curl -sL --progress-bar --max-time 300 -o "$tmp/$2.apk" "https://github.com/$1/releases/download/$tag/$apk"; then
 		install_apk "$tmp/$2.apk" "$3"
 	else
 		echo "    FAILED $3 (fetch)"
 	fi
 }
 install_ironfox() { # arm64-v8a from custom fdroid repo
+	echo "    fetching IronFox release info..."
 	local apk
 	apk="$(curl -s --max-time 90 https://fdroid.ironfoxoss.org/fdroid/repo/index-v1.json | python3 -c '
 import json, sys
@@ -508,7 +513,7 @@ if best:
 else:
 	sys.exit(1)
 ' 2>/dev/null)"
-	[ -n "$apk" ] && curl -sL --max-time 300 -o "$tmp/ironfox.apk" "https://fdroid.ironfoxoss.org/fdroid/repo/$apk"
+	[ -n "$apk" ] && echo "    downloading $apk..." && curl -sL --progress-bar --max-time 300 -o "$tmp/ironfox.apk" "https://fdroid.ironfoxoss.org/fdroid/repo/$apk"
 	[ -f "$tmp/ironfox.apk" ] && install_apk "$tmp/ironfox.apk" "IronFox" || echo "    FAILED IronFox (fetch)"
 }
 yes_install() { # id name
