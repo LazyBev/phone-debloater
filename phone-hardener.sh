@@ -159,6 +159,18 @@ samsung_deep=(
 	com.sec.android.easyMover.Agent
 	com.samsung.android.app.omcagent
 	com.samsung.android.app.voicewakeup
+	com.hiya.star
+	com.samsung.android.forest
+	com.samsung.android.dsms
+	com.samsung.android.qmdservice
+	com.wssyncmldm
+	com.samsung.android.singletake.service
+	com.samsung.android.networkdiagnostic
+	com.samsung.android.service.peoplestripe
+	com.samsung.android.app.taskedge
+	com.samsung.android.app.clipboardedge
+	com.sec.android.mimage.avatarstickers
+	com.sec.android.mimage.photoretouching
 )
 google_deep=(
 	com.google.android.apps.bard
@@ -179,6 +191,10 @@ google_deep=(
 	com.facebook.system
 	com.facebook.services
 	com.facebook.appmanager
+	com.google.android.federatedcompute
+	com.google.android.configupdater
+	com.google.android.onetimeinitializer
+	com.google.android.setupwizard
 )
 tier1=(
 	com.android.printspooler
@@ -323,13 +339,17 @@ fi
 
 scan() { # list preinstalled packages not referenced anywhere in this script
 	known="$(grep -oP 'com\.[a-zA-Z0-9_.-]+' "$0" | sort -u)"
-	core="^(com.android.systemui|com.android.settings|com.android.phone|com.android.shell|com.android.bluetooth|com.android.nfc|com.android.ons|com.android.se|com.android.permissioncontroller|com.android.server.telecom|com.android.providers\..*|com.android.sharedstoragebackup|com.android.defcontainer|com.android.cellbroadcastreceiver|com.android.egg|com.android.keychain|com.android.webview|com.android.inputmethod.*|com.android.launcher3.*)$"
+	noise="(\.overlay|\.resources|auto_generated|\.rro_|SMT\.lang_|com\.monotype\.|navbar\.|cutout\.emulation|hotwordenrollment)"
+	core="^(com.android.systemui|com.android.settings|com.android.phone|com.android.shell|com.android.bluetooth|com.android.nfc|com.android.ons|com.android.se|com.android.permissioncontroller|com.android.packageinstaller|com.android.server.telecom|com.android.providers\..*|com.android.sharedstoragebackup|com.android.defcontainer|com.android.cellbroadcastreceiver|com.android.cellbroadcastservice|com.android.captiveportallogin|com.android.egg|com.android.keychain|com.android.webview|com.android.inputmethod.*|com.android.launcher3.*|com.android.stk|com.android.stk2|com.android.carrierconfig|com.android.mtp|com.android.externalstorage|com.android.documentsui|com.android.mediaprovider.*|com.android.incallui)$"
+	keep="^(com.samsung.android.incallui|com.samsung.android.app.telephonyui|com.samsung.android.emergency|com.samsung.android.biometrics.app.setting|com.samsung.android.fmm|com.samsung.android.spayfw|com.samsung.android.carkey|com.samsung.android.ese|com.samsung.android.kmxservice|com.samsung.android.appseparation|com.samsung.android.rampart|com.samsung.klmsagent|com.samsung.android.knox.*|com.samsung.android.privateaccesstokens|com.samsung.android.messageguardsync|com.samsung.android.dkey|com.samsung.android.cameraxservice|com.samsung.android.service.stplatform|com.google.android.ext.*|com.google.android.modulemetadata|com.google.android.rkpdapp|com.google.android.documentsui|com.google.android.photopicker|com.google.android.appsearch.*|com.google.android.sdksandbox|com.google.android.networkstack.*|com.google.android.safetycenter.*|com.google.android.supervision)$"
 	echo "scanning for preinstalled packages not covered by this script..."
 	adb shell pm list packages -f 2>/dev/null | tr -d '\r' | \
 		sed -n 's#^package:\(/system[^=]*\|/product[^=]*\|/omc[^=]*\|/vendor[^=]*\|/prism[^=]*\|/apex[^=]*\)=\([^=]*\)$#\2#p' | \
 		while read -r p; do
 			echo "$known" | grep -qx "$p" && continue
+			echo "$p" | grep -Eq "$noise" && continue
 			echo "$p" | grep -Eq "$core" && continue
+			echo "$p" | grep -Eq "$keep" && continue
 			printf '  %s\n' "$p"
 		done
 	echo "done (nothing above = every preinstalled app is covered)"
