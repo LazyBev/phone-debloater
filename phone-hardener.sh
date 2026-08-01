@@ -2,10 +2,12 @@
 set -u
 reset=0
 ACCEPT_ALL=0
+scan=0
 for arg in "$@"; do
 	case "$arg" in
 		--reset) reset=1;;
 		--accept-all|-y) ACCEPT_ALL=1;;
+		--scan) scan=1;;
 	esac
 done
 keep="com.google.android.gms com.google.android.gsf com.google.android.gsf.login com.android.vending"
@@ -283,12 +285,14 @@ reset() {
 		package_verifier_enable verifier_verify_installs verifier_verify_adb_installs hide_error_dialogs \
 		backup_enabled adb_require_authorization bixby_pregranted_permissions \
 		link_to_windows_pregranted_permissions link_to_windows_service_pregranted_permissions \
-		always_on_vpn_package always_on_vpn_lockdown; do
+		always_on_vpn_package always_on_vpn_lockdown captive_portal_detection_enabled \
+		stay_on_while_plugged_in; do
 		adb shell settings delete global "$k" >/dev/null 2>&1
 	done
 	for k in wifi_scan_always_enabled bluetooth_scan_always_enabled lock_screen_lock_after_timeout \
 		location_mode doze_pulse_on_pick_up double_tap_to_wake wake_gesture_enabled aod_mode screensaver_enabled \
-		lock_screen_show_notifications lock_screen_allow_private_notifications nfc_on auto_revoke_permissions; do
+		lock_screen_show_notifications lock_screen_allow_private_notifications nfc_on auto_revoke_permissions \
+		nearby_scanning_enabled; do
 		adb shell settings delete secure "$k" >/dev/null 2>&1
 	done
 	for k in screen_off_timeout screen_brightness_mode; do
@@ -296,6 +300,12 @@ reset() {
 	done
 	adb shell am set-standby-bucket --user 0 com.samsung.android.kgclient active >/dev/null 2>&1
 	adb shell cmd appops reset com.google.android.gms >/dev/null 2>&1
+	adb shell cmd appops reset com.android.vending >/dev/null 2>&1
+	for p in com.facebook.appmanager com.facebook.services com.facebook.system \
+		com.google.android.adservices.api com.samsung.android.da.daagent \
+		com.samsung.android.dqagent com.samsung.android.knox.analytics.uploader; do
+		adb shell cmd netpolicy remove restrict-background blacklist "$p" >/dev/null 2>&1
+	done
 	echo "  defaults restored"
 	if [ ${#missing_pkgs[@]} -gt 0 ]; then
 		echo "not in /system (user-installed, must come from play store):"
@@ -308,6 +318,25 @@ adb get-state >/dev/null 2>&1 || { echo "phone not connected (adb devices)"; exi
 
 if [ "$reset" = 1 ]; then
 	reset
+	exit 0
+fi
+
+scan() { # list preinstalled packages not referenced anywhere in this script
+	known="$(grep -oP 'com\.[a-zA-Z0-9_.-]+' "$0" | sort -u)"
+	core="^(com.android.systemui|com.android.settings|com.android.phone|com.android.shell|com.android.bluetooth|com.android.nfc|com.android.ons|com.android.se|com.android.permissioncontroller|com.android.server.telecom|com.android.providers\..*|com.android.sharedstoragebackup|com.android.defcontainer|com.android.cellbroadcastreceiver|com.android.egg|com.android.keychain|com.android.webview|com.android.inputmethod.*|com.android.launcher3.*)$"
+	echo "scanning for preinstalled packages not covered by this script..."
+	adb shell pm list packages -f 2>/dev/null | tr -d '\r' | \
+		sed -n 's#^package:\(/system[^=]*\|/product[^=]*\|/omc[^=]*\|/vendor[^=]*\|/prism[^=]*\|/apex[^=]*\)=\([^=]*\)$#\2#p' | \
+		while read -r p; do
+			echo "$known" | grep -qx "$p" && continue
+			echo "$p" | grep -Eq "$core" && continue
+			printf '  %s\n' "$p"
+		done
+	echo "done (nothing above = every preinstalled app is covered)"
+}
+
+if [ "$scan" = 1 ]; then
+	scan
 	exit 0
 fi
 
@@ -527,7 +556,10 @@ adb shell settings put global adb_require_authorization 1
 adb shell settings put global bixby_pregranted_permissions ""
 adb shell settings put global link_to_windows_pregranted_permissions ""
 adb shell settings put global link_to_windows_service_pregranted_permissions ""
-echo "settings applied (dns, scanning off, 60s timeout, location off, lock-screen notif hidden, verifier on, backup off)"
+adb shell settings put secure nearby_scanning_enabled 0
+adb shell settings put global captive_portal_detection_enabled 0
+adb shell settings put global stay_on_while_plugged_in 0
+echo "settings applied (dns, scanning off, 60s timeout, location off, lock-screen notif hidden, verifier on, backup off, nearby-scan off, captive-portal check off)"
 
 echo "gms (google play services) lockdown:"
 gms_uid="$(adb shell pm list packages -U 2>/dev/null | tr -d '\r' | sed -n 's/^package:com.google.android.gms.*uid:\([0-9]*\).*/\1/p' | head -1)"
@@ -541,6 +573,30 @@ if [ -n "$gms_uid" ]; then
 else
 	echo "  skip (gms not present)"
 fi
+
+echo "play store (com.android.vending) lockdown:"
+vending_uid="$(adb shell pm list packages -U 2>/dev/null | tr -d '\r' | sed -n 's/^package:com.android.vending.*uid:\([0-9]*\).*/\1/p' | head -1)"
+if [ -n "$vending_uid" ]; then
+	for op in CAMERA RECORD_AUDIO ACCESS_FINE_LOCATION ACCESS_COARSE_LOCATION \
+		READ_CONTACTS WRITE_CONTACTS READ_SMS WRITE_SMS RECEIVE_SMS SEND_SMS; do
+		adb shell cmd appops set --uid "$vending_uid" "$op" deny >/dev/null 2>&1
+	done
+	echo "  denied sensitive app-ops for play store (uid $vending_uid)"
+else
+	echo "  skip (play store not present)"
+fi
+
+echo "background-data restriction (netpolicy blacklist, applied only if present):"
+for p in com.facebook.appmanager com.facebook.services com.facebook.system \
+	com.google.android.adservices.api com.samsung.android.da.daagent \
+	com.samsung.android.dqagent com.samsung.android.knox.analytics.uploader; do
+	if adb shell pm path "$p" >/dev/null 2>&1; then
+		adb shell cmd netpolicy add restrict-background blacklist "$p" >/dev/null 2>&1 \
+			&& echo "  restrict-background: $p"
+	else
+		echo "  skip $p (not installed)"
+	fi
+done
 
 echo "performance:"
 adb shell settings put global window_animation_scale 0.5
