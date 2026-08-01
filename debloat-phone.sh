@@ -189,6 +189,15 @@ disable \
 	com.facebook.services \
 	com.facebook.appmanager
 
+echo "settings:"
+adb shell settings put global private_dns_mode hostname
+adb shell settings put global private_dns_specifier dns.adguard-dns.com
+adb shell settings put secure wifi_scan_always_enabled 0
+adb shell settings put secure bluetooth_scan_always_enabled 0
+adb shell settings put system screen_off_timeout 15000
+adb shell settings put secure location_mode 0
+echo "settings applied (dns, scanning off, 15s timeout, location off)"
+
 echo "user picks:"
 disable \
 	com.microsoft.office.outlook \
