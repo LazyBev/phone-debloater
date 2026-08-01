@@ -526,7 +526,7 @@ yes_install() { # id name
 	fi
 	return 1
 }
-foss_count=39
+foss_count=38
 YESALL=0
 echo "  $foss_count apps:"
 if ask "would you like to install these FOSS private apps?"; then
@@ -556,7 +556,6 @@ if ask "would you like to install these FOSS private apps?"; then
 	yes_install com.fossify.notes "Fossify Notes" && install_gh fossifyorg/Notes com.fossify.notes "Fossify Notes"
 	yes_install net.sourceforge.opencamera "Open Camera" && install_fd net.sourceforge.opencamera "Open Camera"
 	yes_install me.zhanghai.android.files "Material Files" && install_gh zhanghai/MaterialFiles me.zhanghai.android.files "Material Files" 'fdroid'
-	yes_install com.nutomic.syncthingandroid "Syncthing" && install_gh syncthing/syncthing-android com.nutomic.syncthingandroid "Syncthing"
 	yes_install eu.faircode.netguard "NetGuard" && install_gh M66B/NetGuard eu.faircode.netguard "NetGuard"
 	yes_install app.organicmaps "Organic Maps" && install_gh organicmaps/organicmaps app.organicmaps "Organic Maps"
 	yes_install com.breezyweather "Breezy Weather" && install_gh breezy-weather/breezy-weather com.breezyweather "Breezy Weather"
