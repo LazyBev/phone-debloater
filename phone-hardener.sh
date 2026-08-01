@@ -202,6 +202,24 @@ adb shell settings put secure lock_screen_lock_after_timeout 30000
 adb shell settings put secure location_mode 0
 echo "settings applied (dns, scanning off, 60s timeout, location off)"
 
+echo "performance:"
+adb shell settings put global window_animation_scale 0.5
+adb shell settings put global transition_animation_scale 0.5
+adb shell settings put global animator_duration_scale 0.5
+adb shell settings put system screen_brightness_mode 1
+adb shell settings put secure doze_pulse_on_pick_up 0
+adb shell settings put secure double_tap_to_wake 0
+adb shell settings put secure wake_gesture_enabled 0
+adb shell settings put global adaptive_battery_management_enabled 1
+adb shell settings put global app_standby_enabled 1
+# adb shell settings put secure nfc_on 0   # optional: saves a bit, breaks NFC (e.g. YubiKey)
+for pkg in com.samsung.android.kgclient; do
+	if adb shell pm path "$pkg" >/dev/null 2>&1; then
+		adb shell am set-standby-bucket --user 0 "$pkg" restricted >/dev/null 2>&1 && echo "  restricted standby: $pkg"
+	fi
+done
+echo "performance applied (0.5x animations, auto-brightness, wake gestures off, adaptive battery)"
+
 echo "futo keyboard:"
 futo="org.futo.inputmethod.latin"
 if adb shell pm path "$futo" >/dev/null 2>&1; then
