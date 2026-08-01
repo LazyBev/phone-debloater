@@ -3,8 +3,10 @@ set -u
 reset=0
 ACCEPT_ALL=0
 scan=0
+help=0
 for arg in "$@"; do
 	case "$arg" in
+		--help|-h) help=1;;
 		--reset) reset=1;;
 		--accept-all|-y) ACCEPT_ALL=1;;
 		--scan) scan=1;;
@@ -331,6 +333,29 @@ reset() {
 }
 
 adb get-state >/dev/null 2>&1 || { echo "phone not connected (adb devices)"; exit 1; }
+
+usage() {
+	cat <<EOF
+usage: phone-hardener.sh [options]
+
+hardens a samsung galaxy via adb: debloats google/samsung apps,
+installs foss replacements, hardens privacy settings.
+
+options:
+  --accept-all|-y   auto-yes every prompt (incl. app installs, lockdowns)
+  --reset           undo everything: restore apps, settings, default keyboard
+  --scan            list preinstalled packages not covered by this script
+  --help|-h         show this help
+
+no options runs the full hardening interactively (per-app y/n/all prompts).
+require an authorized device: adb devices
+EOF
+}
+
+if [ "$help" = 1 ]; then
+	usage
+	exit 0
+fi
 
 if [ "$reset" = 1 ]; then
 	reset
