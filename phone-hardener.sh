@@ -352,6 +352,9 @@ reset() {
 		nearby_scanning_enabled location_scanning_enabled; do
 		adb shell settings delete secure "$k" >/dev/null 2>&1
 	done
+	for k in aod_mode aod_tap_to_show_mode aod_show_state aod_notifications double_tab_to_wake_up; do
+		adb shell settings delete system "$k" >/dev/null 2>&1
+	done
 	for k in screen_off_timeout screen_brightness_mode; do
 		adb shell settings delete system "$k" >/dev/null 2>&1
 	done
@@ -454,6 +457,7 @@ samsung_list() { # every samsung/sec package (incl. removed for user 0), with st
 privacy_check() { # audit current posture: settings, vpn, packages
 	g() { local v; v="$(adb shell settings get global "$1" 2>/dev/null | tr -d '\r')"; printf '  %-40s %s\n' "$1" "${v:-unset}"; }
 	s() { local v; v="$(adb shell settings get secure "$1" 2>/dev/null | tr -d '\r')"; printf '  %-40s %s\n' "$1" "${v:-unset}"; }
+	sy() { local v; v="$(adb shell settings get system "$1" 2>/dev/null | tr -d '\r')"; printf '  %-40s %s\n' "$1" "${v:-unset}"; }
 	echo "privacy audit:"
 	echo "dns (private dns / dot):"
 	g private_dns_mode
@@ -464,6 +468,10 @@ privacy_check() { # audit current posture: settings, vpn, packages
 	s nearby_scanning_enabled
 	s location_scanning_enabled
 	s location_mode
+	echo "aod (samsung reads system namespace):"
+	sy aod_mode
+	sy aod_tap_to_show_mode
+	sy double_tab_to_wake_up
 	echo "network/radio:"
 	g adb_enabled
 	g adb_wifi_enabled
@@ -863,13 +871,12 @@ for entry in "${appops_deny[@]}"; do
 done
 
 echo "play store removal:"
-r=n
+echo "  warn: removes play store for user 0 (aurora store remains); reversible via --reset"
 if [ "$ACCEPT_ALL" = 1 ]; then
-	r=y
-else
-	echo -n "  remove play store entirely? (aurora store remains) [y/n] "
-	read -r r
+	echo "  (--accept-all does not skip this one)"
 fi
+echo -n "  remove play store entirely? (aurora store remains) [y/n] "
+read -r r
 case "$r" in
 	y|Y|yes|YES)
 		adb shell pm uninstall --user 0 com.android.vending >/dev/null 2>&1
@@ -900,10 +907,15 @@ adb shell settings put global animator_duration_scale 0.5
 adb shell settings put system screen_brightness_mode 1
 adb shell settings put secure doze_pulse_on_pick_up 0
 adb shell settings put secure double_tap_to_wake 0
+adb shell settings put system double_tab_to_wake_up 0
 adb shell settings put secure wake_gesture_enabled 0
 adb shell settings put global adaptive_battery_management_enabled 1
 adb shell settings put global app_standby_enabled 1
 adb shell settings put secure aod_mode 0
+adb shell settings put system aod_mode 0
+adb shell settings put system aod_tap_to_show_mode 0
+adb shell settings put system aod_show_state 0
+adb shell settings put system aod_notifications 0
 adb shell settings put global mobile_data_always_on 0
 adb shell settings put secure screensaver_enabled 0
 adb shell settings put secure nfc_on 0   # breaks NFC (e.g. YubiKey); uncomment to keep
