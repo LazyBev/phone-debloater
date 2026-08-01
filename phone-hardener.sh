@@ -193,6 +193,32 @@ disable \
 	com.facebook.services \
 	com.facebook.appmanager
 
+echo "tier 1 (safe extras):"
+disable \
+	com.android.printspooler \
+	com.android.bips \
+	com.sec.android.easyonehand \
+	com.samsung.knox.securefolder \
+	com.sec.android.app.shealth \
+	com.android.dreams.basic \
+	com.android.dreams.phototable \
+	com.samsung.android.app.talkback
+
+echo "tier 2 (replacement needed):"
+if adb shell pm path fr.neamar.kiss >/dev/null 2>&1; then
+	echo "  kiss launcher present, removing One UI Home"
+	disable com.sec.android.app.launcher
+	adb shell cmd package set-home-activity fr.neamar.kiss/fr.neamar.kiss.MainActivity >/dev/null 2>&1 || true
+else
+	echo "  skip One UI Home (kiss launcher not installed)"
+fi
+if adb shell pm path com.fossify.phone >/dev/null 2>&1; then
+	echo "  fossify phone present, removing samsung dialer"
+	disable com.samsung.android.dialer
+else
+	echo "  skip samsung dialer (fossify phone not installed)"
+fi
+
 echo "settings:"
 adb shell settings put global private_dns_mode hostname
 adb shell settings put global private_dns_specifier dns.adguard-dns.com
