@@ -5,12 +5,21 @@ ACCEPT_ALL=0
 scan=0
 help=0
 tier=4
+bench_mode=0
+bench_compare=0
+bench_a=""
+bench_b=""
+samsung_mode=0
 while [ "$#" -gt 0 ]; do
 	case "$1" in
 		--help|-h) help=1;;
 		--reset) reset=1;;
 		--accept-all|-y) ACCEPT_ALL=1;;
 		--scan) scan=1;;
+		--samsung) samsung_mode=1;;
+		--bench) bench_mode=1; if [ $# -ge 2 ] && [ "${2#-}" = "$2" ]; then bench_label="$2"; shift; fi;;
+		--bench=*) bench_mode=1; bench_label="${1#--bench=}";;
+		--bench-compare) bench_compare=1; bench_a="${2:-}"; bench_b="${3:-}"; shift $(( $# >= 3 ? 2 : ( $# >= 2 ? 1 : 0 ) ));;
 		--tier)
 			case "${2:-}" in
 				1|2|3|4) tier="$2"; shift;;
@@ -364,6 +373,9 @@ options:
                     3=+safe extras/launcher+dialer swap/user picks, 4=all)
   --reset           undo everything: restore apps, settings, default keyboard
   --scan            list preinstalled packages not covered by this script
+  --samsung         list ALL preinstalled samsung/sec packages with state
+  --bench[=label]   snapshot perf metrics (mem/procs/packages) to a file
+  --bench-compare A B  diff two snapshots saved with --bench
   --help|-h         show this help
 
 no options runs the full hardening interactively (per-app y/n/all prompts).
@@ -398,6 +410,76 @@ scan() { # list preinstalled packages not referenced anywhere in this script
 		done
 	echo "done (nothing above = every preinstalled app is covered)"
 }
+
+samsung_list() { # every samsung/sec package (incl. removed for user 0), with state
+	adb shell pm list packages -u 2>/dev/null | tr -d '\r' | \
+		sed -n 's#^package:\(com\.\(samsung\|sec\)\.[a-zA-Z0-9_.]*\)$#\1#p' | sort -u > /tmp/samsung-all.txt
+	adb shell pm list packages -d 2>/dev/null | tr -d '\r' | \
+		sed -n 's#^package:\(com\.\(samsung\|sec\)\.[a-zA-Z0-9_.]*\)$#\1#p' | sort -u > /tmp/samsung-disabled.txt
+	adb shell pm list packages 2>/dev/null | tr -d '\r' | \
+		sed -n 's#^package:\(com\.\(samsung\|sec\)\.[a-zA-Z0-9_.]*\)$#\1#p' | sort -u > /tmp/samsung-installed.txt
+	echo "all samsung/sec packages (enabled / DISABLED / REMOVED-for-user0):"
+	while read -r p; do
+		[ -z "$p" ] && continue
+		if grep -qx "$p" /tmp/samsung-disabled.txt; then
+			printf '  %-58s DISABLED\n' "$p"
+		elif grep -qx "$p" /tmp/samsung-installed.txt; then
+			printf '  %-58s enabled\n' "$p"
+		else
+			printf '  %-58s REMOVED\n' "$p"
+		fi
+	done < /tmp/samsung-all.txt
+	echo "total: $(grep -c '^com\.' /tmp/samsung-all.txt)  (enabled: $(grep -c '^com\.' /tmp/samsung-installed.txt), disabled: $(grep -c '^com\.' /tmp/samsung-disabled.txt), removed: $(( $(grep -c '^com\.' /tmp/samsung-all.txt) - $(grep -c '^com\.' /tmp/samsung-installed.txt) )))"
+	rm -f /tmp/samsung-all.txt /tmp/samsung-disabled.txt /tmp/samsung-installed.txt
+}
+
+bench() { # snapshot key performance metrics; --bench label
+	label="${1:-snapshot}"
+	out="$HOME/phone-bench-$label.txt"
+	{
+		echo "=== phone benchmark snapshot: $label ==="
+		echo "date: $(date '+%Y-%m-%d %H:%M:%S')"
+		echo "uptime: $(adb shell uptime 2>/dev/null | tr -d '\r')"
+		echo "packages installed: $(adb shell pm list packages 2>/dev/null | tr -d '\r' | grep -c '^package:')"
+		echo "running processes: $(adb shell ps -A 2>/dev/null | tr -d '\r' | grep -vc '^PID')"
+		adb shell cat /proc/meminfo 2>/dev/null | tr -d '\r' | grep -E '^(MemTotal|MemFree|MemAvailable|Buffers|Cached):'
+		echo "load: $(adb shell cat /proc/loadavg 2>/dev/null | tr -d '\r')"
+		echo "storage: $(adb shell df /data 2>/dev/null | tr -d '\r' | tail -1)"
+	} | tee "$out"
+	echo "saved: $out (compare with: --bench-compare <label> <label>)"
+}
+
+pval() { # file key -> first number on matching line
+	grep -F "$2" "$1" | head -1 | grep -oE '[0-9.]+' | head -1
+}
+
+bench_compare() { # --bench-compare A B
+	local a="$HOME/phone-bench-$1.txt" b="$HOME/phone-bench-$2.txt"
+	[ -f "$a" ] || { echo "missing $a (run: --bench $1 first)"; exit 1; }
+	[ -f "$b" ] || { echo "missing $b (run: --bench $2 first)"; exit 1; }
+	printf '%-22s %14s %14s %14s\n' metric "$1" "$2" "delta($2-$1)"
+	for m in "MemAvailable:" "MemFree:" "Cached:" "packages installed:" "running processes:" "load:"; do
+		local x y
+		x="$(pval "$a" "$m")"; y="$(pval "$b" "$m")"
+		local d=""
+		[ -n "$x" ] && [ -n "$y" ] && d="$(echo "$y $x" | awk '{printf "%.2f", $1-$2}')"
+		printf '%-22s %14s %14s %14s\n' "${m%:}" "$x" "$y" "$d"
+	done
+	echo "(higher MemAvailable/MemFree/Cached = better; lower processes/packages/load = better)"
+}
+
+if [ "$bench_compare" = 1 ]; then
+	bench_compare "$bench_a" "$bench_b"
+	exit 0
+fi
+if [ "$bench_mode" = 1 ]; then
+	bench "${bench_label:-snapshot}"
+	exit 0
+fi
+if [ "$samsung_mode" = 1 ]; then
+	samsung_list
+	exit 0
+fi
 
 if [ "$scan" = 1 ]; then
 	scan
@@ -529,7 +611,7 @@ yes_install() { # id name
 	fi
 	return 1
 }
-foss_count=38
+foss_count=39
 YESALL=0
 echo "  $foss_count apps:"
 if ask "would you like to install these FOSS private apps?"; then
@@ -574,6 +656,7 @@ if ask "would you like to install these FOSS private apps?"; then
 	yes_install com.termux "Termux" && install_fd com.termux "Termux"
 	yes_install com.valhalla.thor "Thor App Manager" && install_gh trinadhthatakula/Thor com.valhalla.thor "Thor App Manager" 'foss-release'
 	yes_install org.torproject.vpn "Tor VPN" && install_fd org.torproject.vpn "Tor VPN"
+	yes_install de.markusfisch.android.binaryeye "Binary Eye" && install_fd de.markusfisch.android.binaryeye "Binary Eye"
 else
 	echo "  skipped"
 fi
