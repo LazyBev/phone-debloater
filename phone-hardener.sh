@@ -202,6 +202,35 @@ adb shell settings put secure lock_screen_lock_after_timeout 30000
 adb shell settings put secure location_mode 0
 echo "settings applied (dns, scanning off, 60s timeout, location off)"
 
+echo "futo keyboard:"
+futo="org.futo.inputmethod.latin"
+if adb shell pm path "$futo" >/dev/null 2>&1; then
+	echo "  installed"
+else
+	echo "  installing (needs curl + network)..."
+	url="https://github.com/futo-org/android-keyboard/releases/download/0.1.29.1/keyboard-0.1.29.1.apk"
+	tmp="$(mktemp -d)/futo.apk"
+	if curl -sL --max-time 300 -o "$tmp" "$url" && adb install -r "$tmp"; then
+		echo "  installed $url"
+	else
+		echo "  install failed (update version in script if a new release exists)"
+	fi
+fi
+if adb shell pm path "$futo" >/dev/null 2>&1; then
+	adb shell ime enable "$futo/.LatinIME" >/dev/null 2>&1
+	adb shell ime set "$futo/.LatinIME" >/dev/null 2>&1
+	echo "  default input method: $futo"
+fi
+
+echo "other keyboards:"
+for ime in $(adb shell ime list -s 2>/dev/null | tr -d '\r'); do
+	pkg="${ime%%/*}"
+	case "$pkg" in
+		"$futo") echo "  keep: $pkg (futo)" ;;
+		*) disable "$pkg" ;;
+	esac
+done
+
 echo "user picks:"
 disable \
 	com.microsoft.office.outlook \

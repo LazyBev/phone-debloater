@@ -264,26 +264,6 @@
    "pendingRepoRenameUrl": null
   },
   {
-   "id": "org.futo.inputmethod.latin",
-   "url": "https://github.com/futo-org/android-keyboard",
-   "author": "",
-   "name": "",
-   "installedVersion": null,
-   "latestVersion": "unknown",
-   "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
-   "otherAssetUrls": "[]",
-   "preferredApkIndex": 0,
-   "additionalSettings": "{\"appName\": \"FUTO Keyboard\"}",
-   "lastUpdateCheck": null,
-   "pinned": false,
-   "categories": [],
-   "releaseDate": null,
-   "changeLog": null,
-   "overrideSource": null,
-   "allowIdChange": false,
-   "pendingRepoRenameUrl": null
-  },
-  {
    "id": "app.zhaobozhen.libre",
    "url": "https://github.com/z-huang/InnerTune",
    "author": "",
