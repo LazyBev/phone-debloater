@@ -320,15 +320,15 @@
   "note": "Terminal emulator"
  },
  {
-  "label": "Thorium Browser",
-  "id": "org.chromium.thorium",
+  "label": "Thor App Manager",
+  "id": "com.valhalla.thor",
   "source": "github",
-  "source_info": "Alex313031/Thorium-Android",
+  "source_info": "trinadhthatakula/Thor",
   "track_only": false,
   "version_code": "Latest",
-  "filter_regex": "Thorium_Public_arm64",
+  "filter_regex": "foss-release",
   "use_integrations": true,
-  "note": "Chromium fork focused on speed and privacy (GPC, no FLoC/Privacy Sandbox)"
+  "note": "App manager/installer (root, Shizuku, Dhizuku): freeze, suspend, uninstall, batch reinstall, fix store"
  },
  {
   "label": "Thunderbird",
