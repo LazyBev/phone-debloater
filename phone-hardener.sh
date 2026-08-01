@@ -282,7 +282,8 @@ reset() {
 		animator_duration_scale adaptive_battery_management_enabled app_standby_enabled mobile_data_always_on \
 		package_verifier_enable verifier_verify_installs verifier_verify_adb_installs hide_error_dialogs \
 		backup_enabled adb_require_authorization bixby_pregranted_permissions \
-		link_to_windows_pregranted_permissions link_to_windows_service_pregranted_permissions; do
+		link_to_windows_pregranted_permissions link_to_windows_service_pregranted_permissions \
+		always_on_vpn_package always_on_vpn_lockdown; do
 		adb shell settings delete global "$k" >/dev/null 2>&1
 	done
 	for k in wifi_scan_always_enabled bluetooth_scan_always_enabled lock_screen_lock_after_timeout \
@@ -294,6 +295,7 @@ reset() {
 		adb shell settings delete system "$k" >/dev/null 2>&1
 	done
 	adb shell am set-standby-bucket --user 0 com.samsung.android.kgclient active >/dev/null 2>&1
+	adb shell cmd appops reset com.google.android.gms >/dev/null 2>&1
 	echo "  defaults restored"
 	if [ ${#missing_pkgs[@]} -gt 0 ]; then
 		echo "not in /system (user-installed, must come from play store):"
@@ -425,7 +427,7 @@ yes_install() { # id name
 	fi
 	return 1
 }
-foss_count=37
+foss_count=38
 YESALL=0
 echo "  $foss_count apps:"
 if ask "would you like to install these FOSS private apps?"; then
@@ -466,9 +468,31 @@ if ask "would you like to install these FOSS private apps?"; then
 	yes_install org.eu.exodus_privacy.exodusprivacy "Exodus Privacy" && install_fd org.eu.exodus_privacy.exodusprivacy "Exodus Privacy"
 	yes_install com.termux "Termux" && install_gh termux/termux-app com.termux "Termux"
 	yes_install com.valhalla.thor "Thor App Manager" && install_gh trinadhthatakula/Thor com.valhalla.thor "Thor App Manager" 'foss-release'
+	yes_install org.torproject.vpn "Tor VPN" && install_fd org.torproject.vpn "Tor VPN"
 else
 	echo "  skipped"
 fi
+
+echo "vpn kill-switch:"
+if adb shell pm path com.protonvpn.android >/dev/null 2>&1; then
+	r=n
+	if [ "$ACCEPT_ALL" = 1 ]; then
+		r=y
+	else
+		echo -n "  enable always-on vpn (proton) + lockdown? make sure you're logged into proton first [y/n] "
+		read -r r
+	fi
+	case "$r" in
+		y|Y|yes|YES)
+			adb shell settings put global always_on_vpn_package com.protonvpn.android
+			adb shell settings put global always_on_vpn_lockdown 1
+			echo "  always-on vpn + lockdown enabled (blocks all non-vpn traffic)"
+			;;
+	esac
+else
+	echo "  skip (proton vpn not installed)"
+fi
+# manual apps (play-store only, not on f-droid): cloudflare 1.1.1.1 warp vpn (com.cloudflare.onedotonedotonedotone)
 
 echo "tier 2 (removals):"
 if adb shell pm path fr.neamar.kiss >/dev/null 2>&1; then
@@ -504,6 +528,19 @@ adb shell settings put global bixby_pregranted_permissions ""
 adb shell settings put global link_to_windows_pregranted_permissions ""
 adb shell settings put global link_to_windows_service_pregranted_permissions ""
 echo "settings applied (dns, scanning off, 60s timeout, location off, lock-screen notif hidden, verifier on, backup off)"
+
+echo "gms (google play services) lockdown:"
+gms_uid="$(adb shell pm list packages -U 2>/dev/null | tr -d '\r' | sed -n 's/^package:com.google.android.gms.*uid:\([0-9]*\).*/\1/p' | head -1)"
+if [ -n "$gms_uid" ]; then
+	for op in CAMERA RECORD_AUDIO ACCESS_FINE_LOCATION ACCESS_COARSE_LOCATION \
+		READ_CONTACTS WRITE_CONTACTS READ_CALL_LOG WRITE_CALL_LOG \
+		READ_SMS WRITE_SMS RECEIVE_SMS SEND_SMS BODY_SENSORS ACTIVITY_RECOGNITION; do
+		adb shell cmd appops set --uid "$gms_uid" "$op" deny >/dev/null 2>&1
+	done
+	echo "  denied sensitive app-ops for gms (uid $gms_uid); push/network untouched"
+else
+	echo "  skip (gms not present)"
+fi
 
 echo "performance:"
 adb shell settings put global window_animation_scale 0.5
