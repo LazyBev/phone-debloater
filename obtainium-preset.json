@@ -64,7 +64,7 @@
    "pendingRepoRenameUrl": null
   },
   {
-   "id": "com.deckerst.aves",
+   "id": "deckers.thibault.aves.libre",
    "url": "https://github.com/deckerst/aves",
    "author": "",
    "name": "",
@@ -73,7 +73,7 @@
    "apkUrls": "[[\"placeholder\",\"placeholder\"]]",
    "otherAssetUrls": "[]",
    "preferredApkIndex": 0,
-   "additionalSettings": "{\"appName\": \"Aves Gallery\"}",
+   "additionalSettings": "{\"appName\": \"Aves Gallery\", \"apkFilterRegEx\": \"app-libre-arm64-v8a-release.apk\"}",
    "lastUpdateCheck": null,
    "pinned": false,
    "categories": [],
