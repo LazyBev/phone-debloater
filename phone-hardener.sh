@@ -794,11 +794,18 @@ else
 fi
 # manual apps (play-store only, not on f-droid): cloudflare 1.1.1.1 warp vpn (com.cloudflare.onedotonedotonedotone)
 
-if [ "$tier" -ge 3 ]; then
+	if [ "$tier" -ge 3 ]; then
 	echo "tier 3 removals (launcher/dialer swap):"
 	if adb shell pm path fr.neamar.kiss >/dev/null 2>&1; then
-		disable com.sec.android.app.launcher
-		adb shell cmd package set-home-activity fr.neamar.kiss/fr.neamar.kiss.MainActivity >/dev/null 2>&1 || true
+		r=n
+		echo -n "  disable One UI Home + set KISS home? (breaks samsung gesture-nav/recents until re-enabled) [y/n] "
+		read -r r
+		case "$r" in
+			y|Y|yes|YES)
+				disable com.sec.android.app.launcher
+				adb shell cmd package set-home-activity fr.neamar.kiss/fr.neamar.kiss.MainActivity >/dev/null 2>&1 || true
+				;;
+		esac
 	else
 		echo "  skip One UI Home (kiss launcher not installed)"
 	fi
