@@ -1,0 +1,302 @@
+[
+  {
+    "label": "Cromite",
+    "id": "org.cromite.cromite",
+    "source": "github",
+    "source_info": "uazo/cromite",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "Chromium without Google tracking; ad/tracker blocking built in"
+  },
+  {
+    "label": "Firefox Focus",
+    "id": "org.mozilla.focus",
+    "source": "github",
+    "source_info": "mozilla-mobile/focus-android",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "Throwaway tab-by-tab browser; erases session per tab"
+  },
+  {
+    "label": "Mull",
+    "id": "us.spotco.fennec_dos",
+    "source": "f-droid",
+    "source_info": "us.spotco.fennec_dos",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "Firefox with all Mozilla telemetry stripped"
+  },
+  {
+    "label": "Open Camera",
+    "id": "net.sourceforge.opencamera",
+    "source": "github",
+    "source_info": "almalence/OpenCamera",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "Camera replacement; no network permission at all"
+  },
+  {
+    "label": "Aves Gallery",
+    "id": "com.deckerst.aves",
+    "source": "github",
+    "source_info": "deutscher/Aves",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "Gallery replacement; metadata-aware, no cloud hooks"
+  },
+  {
+    "label": "QKSMS",
+    "id": "com.moez.QKSMS",
+    "source": "github",
+    "source_info": "moezbhatti/qksms",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "SMS replacement; encrypted backup, no ads"
+  },
+  {
+    "label": "Fossify Contacts",
+    "id": "com.fossify.contacts",
+    "source": "github",
+    "source_info": "fossifyorg/Contacts",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "Contacts replacement, offline"
+  },
+  {
+    "label": "Material Files",
+    "id": "me.zhanghai.android.files",
+    "source": "github",
+    "source_info": "zhanghai/MaterialFiles",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "File manager replacement, no permissions by default"
+  },
+  {
+    "label": "Fossify Clock",
+    "id": "com.fossify.clock",
+    "source": "github",
+    "source_info": "fossifyorg/Clock",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "Alarm/clock replacement, offline"
+  },
+  {
+    "label": "Fossify Calculator",
+    "id": "com.fossify.calculator",
+    "source": "github",
+    "source_info": "fossifyorg/Calculator",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "Calculator replacement, offline"
+  },
+  {
+    "label": "Fossify Calendar",
+    "id": "com.fossify.calendar",
+    "source": "github",
+    "source_info": "fossifyorg/Calendar",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "Calendar replacement, offline"
+  },
+  {
+    "label": "Fossify Notes",
+    "id": "com.fossify.notes",
+    "source": "github",
+    "source_info": "fossifyorg/Notes",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "Notes replacement, offline"
+  },
+  {
+    "label": "Proton Mail",
+    "id": "ch.protonmail.android",
+    "source": "github",
+    "source_info": "ProtonMail/proton-mail-android",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "E2E-encrypted email"
+  },
+  {
+    "label": "Thunderbird",
+    "id": "org.mozilla.thunderbird",
+    "source": "github",
+    "source_info": "thunderbird/thunderbird-android",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "E2E-capable email (OpenPGP via add-on); handles any provider"
+  },
+  {
+    "label": "Proton VPN",
+    "id": "com.protonvpn.android",
+    "source": "github",
+    "source_info": "ProtonVPN/android-app",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "WireGuard/OpenVPN via Proton; free tier"
+  },
+  {
+    "label": "Proton Pass",
+    "id": "com.protonvpn.android.pass",
+    "source": "github",
+    "source_info": "ProtonPass/android-pass",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "Password manager under the same E2E-encrypted Proton account"
+  },
+  {
+    "label": "Proton Drive",
+    "id": "me.proton.android.drive",
+    "source": "github",
+    "source_info": "ProtonDriveApps/android-drive",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "E2E-encrypted cloud files"
+  },
+  {
+    "label": "Aegis",
+    "id": "com.beemdevelopment.aegis",
+    "source": "github",
+    "source_info": "beemdevelopment/Aegis",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "2FA authenticator; encrypted vault, offline"
+  },
+  {
+    "label": "Bitwarden",
+    "id": "com.x8bit.bitwarden",
+    "source": "github",
+    "source_info": "bitwarden/mobile",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "Password manager"
+  },
+  {
+    "label": "InnerTune",
+    "id": "app.zhaobozhen.libre",
+    "source": "github",
+    "source_info": "z-huang/InnerTune",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "YouTube Music client without Google; downloads"
+  },
+  {
+    "label": "AntennaPod",
+    "id": "de.danoeh.antennapod",
+    "source": "github",
+    "source_info": "AntennaPod/AntennaPod",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "Podcasts, open source"
+  },
+  {
+    "label": "Organic Maps",
+    "id": "app.organicmaps",
+    "source": "github",
+    "source_info": "organicmaps/organicmaps",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "Offline maps; no account, no tracking"
+  },
+  {
+    "label": "Breezy Weather",
+    "id": "com.breezyweather",
+    "source": "github",
+    "source_info": "breezy-weather/breezy-weather",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "Weather; pick a privacy-respecting data source"
+  },
+  {
+    "label": "Just Player",
+    "id": "com.brouken.player",
+    "source": "github",
+    "source_info": "moneytoo/Player",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "Video player, minimal and ad-free"
+  },
+  {
+    "label": "LocalSend",
+    "id": "com.localsend.localsend",
+    "source": "github",
+    "source_info": "localsend/localsend",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "AirDrop-style file transfer; no account"
+  },
+  {
+    "label": "NetGuard",
+    "id": "eu.faircode.netguard",
+    "source": "github",
+    "source_info": "M66B/NetGuard",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "Per-app firewall (local VPN, no root)"
+  },
+  {
+    "label": "Seal",
+    "id": "com.junkfood.seal",
+    "source": "github",
+    "source_info": "JunkFood02/Seal",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "yt-dlp GUI for downloading media"
+  },
+  {
+    "label": "Termux",
+    "id": "com.termux",
+    "source": "github",
+    "source_info": "termux/termux-app",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "Terminal emulator"
+  },
+  {
+    "label": "Molly",
+    "id": "im.molly.app",
+    "source": "github",
+    "source_info": "mollyim/mollyim-android",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "Hardened Signal fork: no Google Services, passphrase-protected key store, per-call network isolation"
+  },
+  {
+    "label": "Syncthing",
+    "id": "com.nutomic.syncthingandroid",
+    "source": "github",
+    "source_info": "syncthing/syncthing-android",
+    "track_only": false,
+    "version_code": "Latest",
+    "use_integrations": true,
+    "note": "Self-hosted file sync; no cloud"
+  }
+]
