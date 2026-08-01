@@ -221,4 +221,12 @@ disable \
 	com.microsoft.appmanager \
 	com.sec.android.app.myfiles
 
+echo "obtainium preset:"
+preset="$(dirname "$0")/obtainium-preset.json"
+if [ -f "$preset" ]; then
+	adb push "$preset" /sdcard/Download/obtainium-preset.json >/dev/null && echo "  pushed to /sdcard/Download/obtainium-preset.json"
+else
+	echo "  skip: $preset not found"
+fi
+
 echo done
