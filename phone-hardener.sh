@@ -330,13 +330,13 @@ reset() {
 		backup_enabled adb_require_authorization bixby_pregranted_permissions \
 		link_to_windows_pregranted_permissions link_to_windows_service_pregranted_permissions \
 		always_on_vpn_package always_on_vpn_lockdown captive_portal_detection_enabled \
-		stay_on_while_plugged_in; do
+		stay_on_while_plugged_in wifi_networks_available_notification_on; do
 		adb shell settings delete global "$k" >/dev/null 2>&1
 	done
 	for k in wifi_scan_always_enabled bluetooth_scan_always_enabled lock_screen_lock_after_timeout \
 		location_mode doze_pulse_on_pick_up double_tap_to_wake wake_gesture_enabled aod_mode screensaver_enabled \
 		lock_screen_show_notifications lock_screen_allow_private_notifications nfc_on auto_revoke_permissions \
-		nearby_scanning_enabled; do
+		nearby_scanning_enabled location_scanning_enabled; do
 		adb shell settings delete secure "$k" >/dev/null 2>&1
 	done
 	for k in screen_off_timeout screen_brightness_mode; do
@@ -710,7 +710,11 @@ echo "settings:"
 adb shell settings put global private_dns_mode hostname
 adb shell settings put global private_dns_specifier dns.adguard-dns.com
 adb shell settings put secure wifi_scan_always_enabled 0
+adb shell settings put global wifi_scan_always_enabled 0
 adb shell settings put secure bluetooth_scan_always_enabled 0
+adb shell settings put global bluetooth_scan_always_enabled 0
+adb shell settings put secure location_scanning_enabled 0
+adb shell settings put global wifi_networks_available_notification_on 0
 adb shell settings put system screen_off_timeout 60000
 adb shell settings put secure lock_screen_lock_after_timeout 30000
 adb shell settings put secure location_mode 0
@@ -729,7 +733,7 @@ adb shell settings put global link_to_windows_service_pregranted_permissions ""
 adb shell settings put secure nearby_scanning_enabled 0
 adb shell settings put global captive_portal_detection_enabled 0
 adb shell settings put global stay_on_while_plugged_in 0
-echo "settings applied (dns, scanning off, 60s timeout, location off, lock-screen notif hidden, verifier on, backup off, nearby-scan off, captive-portal check off)"
+echo "settings applied (dns, scanning off, 60s timeout, location off, lock-screen notif hidden, verifier on, backup off, nearby-scan off, captive-portal check off, wifi-open-net-notif off)"
 
 echo "gms (google play services) lockdown:"
 gms_uid="$(adb shell pm list packages -U 2>/dev/null | tr -d '\r' | sed -n 's/^package:com.google.android.gms.*uid:\([0-9]*\).*/\1/p' | head -1)"
