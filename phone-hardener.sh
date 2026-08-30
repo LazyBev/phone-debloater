@@ -11,6 +11,8 @@ bench_a=""
 bench_b=""
 samsung_mode=0
 check_mode=0
+verify_mode=0
+hacker_mode=0
 while [ "$#" -gt 0 ]; do
 	case "$1" in
 		--help|-h) help=1;;
@@ -19,6 +21,8 @@ while [ "$#" -gt 0 ]; do
 		--scan) scan=1;;
 		--samsung) samsung_mode=1;;
 		--check) check_mode=1;;
+		--verify) verify_mode=1;;
+		--hacker) hacker_mode=1;;
 		--bench) bench_mode=1; if [ $# -ge 2 ] && [ "${2#-}" = "$2" ]; then bench_label="$2"; shift; fi;;
 		--bench=*) bench_mode=1; bench_label="${1#--bench=}";;
 		--bench-compare) bench_compare=1; bench_a="${2:-}"; bench_b="${3:-}"; shift $(( $# >= 3 ? 2 : ( $# >= 2 ? 1 : 0 ) ));;
@@ -38,6 +42,17 @@ case "$tier" in
 	1|2|3|4) : ;;
 	*) echo "invalid tier: $tier (use 1-4)"; exit 1;;
 esac
+
+if [ "$hacker_mode" = 1 ]; then
+	echo -e "\033[1;32m"
+	cat <<'EOF'
+  ▓▓▓ INITIATING PHONE HARDENING SEQUENCE ▓▓▓
+EOF
+	echo -e "\033[0m"
+	export PS4=$'\033[1;32m▶\033[0m '
+	set -x
+fi
+
 keep="com.google.android.gms com.google.android.gsf com.google.android.gsf.login com.android.vending"
 google=(
 	com.google.android.googlequicksearchbox
@@ -276,14 +291,84 @@ disable() {
 
 missing_pkgs=()
 appops_deny=(
+	# keyboards
+	"helium314.keyboard CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS RECEIVE_SMS SEND_SMS BODY_SENSORS ACTIVITY_RECOGNITION READ_CLIPBOARD GET_ACCOUNTS"
+	"org.futo.inputmethod.latin CAMERA FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS RECEIVE_SMS SEND_SMS BODY_SENSORS ACTIVITY_RECOGNITION READ_CLIPBOARD GET_ACCOUNTS"
+	# dialer / sms / messaging
+	"com.fossify.phone CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION BODY_SENSORS ACTIVITY_RECOGNITION READ_CLIPBOARD"
+	"dev.octoshrimpy.quik.fdroid CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CALL_LOG BODY_SENSORS ACTIVITY_RECOGNITION"
+	"im.molly.app FINE_LOCATION COARSE_LOCATION BODY_SENSORS ACTIVITY_RECOGNITION"
+	# launchers
+	"fr.neamar.kiss CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS WRITE_CONTACTS READ_CALL_LOG READ_SMS RECEIVE_SMS SEND_SMS BODY_SENSORS ACTIVITY_RECOGNITION READ_CLIPBOARD"
+	"de.jrpie.android.launcher CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS WRITE_CONTACTS READ_CALL_LOG READ_SMS RECEIVE_SMS SEND_SMS BODY_SENSORS ACTIVITY_RECOGNITION READ_CLIPBOARD"
+	"com.sec.android.app.launcher CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS WRITE_CONTACTS READ_CALL_LOG READ_SMS RECEIVE_SMS SEND_SMS BODY_SENSORS ACTIVITY_RECOGNITION READ_CLIPBOARD GET_ACCOUNTS"
+	# browsers (camera/mic/location left for WebRTC/geolocation API use)
+	"org.cromite.cromite READ_CONTACTS WRITE_CONTACTS READ_CALL_LOG READ_SMS WRITE_SMS RECEIVE_SMS SEND_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"org.ironfoxoss.ironfox READ_CONTACTS WRITE_CONTACTS READ_CALL_LOG READ_SMS WRITE_SMS RECEIVE_SMS SEND_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	# auth / password / crypto (camera left where QR scan is a core feature)
+	"com.beemdevelopment.aegis RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION GET_ACCOUNTS"
+	"com.kunzisoft.keepass.libre RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION GET_ACCOUNTS"
+	"proton.android.pass.fdroid RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"com.pgpony.android RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"de.markusfisch.android.binaryeye RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"org.cryptomator.lite CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	# mail / cloud / sync
+	"ch.protonmail.android FINE_LOCATION COARSE_LOCATION BODY_SENSORS ACTIVITY_RECOGNITION"
+	"me.proton.android.drive RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
 	"org.mozilla.thunderbird CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS"
-	"de.danoeh.antennapod CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_SMS"
-	"com.junkfood.seal CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_SMS"
-	"ch.protonmail.android RECORD_AUDIO FINE_LOCATION COARSE_LOCATION"
+	"at.bitfire.davdroid CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"com.fossify.contacts CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"com.fossify.calendar CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	# vpn / network / firewall (self-contained, no sensor/contact needs)
+	"ch.protonvpn.android CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
 	"org.torproject.vpn FINE_LOCATION COARSE_LOCATION"
+	"eu.faircode.netguard CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"com.celzero.bravedns CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"dev.clombardo.dnsnet CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"com.emanuelef.remote_capture CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	# maps/weather/tracker (location left where it's the whole point)
+	"app.organicmaps CAMERA RECORD_AUDIO READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"com.breezyweather CAMERA RECORD_AUDIO READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"de.seemoo.at_tracking_detection CAMERA RECORD_AUDIO READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS"
+	# camera (location/mic left as optional geotag/video features)
+	"net.sourceforge.opencamera READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION READ_CLIPBOARD"
+	# media / downloaders / gallery / files
+	"de.danoeh.antennapod CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_SMS"
+	"app.zhaobozhen.libre CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"com.github.libretube CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"com.brouken.player CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS"
+	"com.junkfood.seal CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_SMS"
+	"deckers.thibault.aves.libre CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"me.zhanghai.android.files CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_SMS"
 	"com.localsend.localsend CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION"
-	"com.fossify.notes CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_SMS"
+	# productivity/utility
+	"com.fossify.clock CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
 	"com.fossify.calculator CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_SMS"
+	"com.fossify.notes CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_SMS"
+	"com.trianguloy.urlchecker CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"com.jarsilio.android.scrambledeggsif RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"com.github.tmo1.sms_ie CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"com.f0x1d.logfox CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	# app management / stores (none need sensors/contacts/sms)
+	"org.eu.exodus_privacy.exodusprivacy CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"com.valhalla.thor CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"org.samo_lego.canta CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"io.github.muntashirakon.AppManager CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"dev.imranr.obtainium.fdroid CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"eu.darken.myperm CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"net.typeblog.shelter CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"com.machiav3lli.backup CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"com.machiav3lli.fdroid CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"com.aurora.store CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"org.fdroid.fdroid CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"com.looker.droidify CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"eu.bubu1.fdroidclassic CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"app.flicky CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"org.gdroid.gdroid CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"in.sunilpaulmathew.izzyondroid CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"zed.rainxch.githubstore CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"app.accrescent.client CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
+	"dev.zapstore.app CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS BODY_SENSORS ACTIVITY_RECOGNITION"
 )
 restore() { # re-enable / re-install system packages removed by disable()
 	for pkg in "$@"; do
@@ -319,6 +404,42 @@ np_rm() { # package: remove from background-data blacklist
 	local uid
 	uid="$(np_uid "$1")"
 	[ -n "$uid" ] && adb shell cmd netpolicy remove restrict-background-blacklist "$uid" >/dev/null 2>&1
+}
+
+verify_sigs() {
+	if ! command -v apksigner >/dev/null 2>&1; then
+		echo "apksigner not found (install Android SDK build-tools, or add it to PATH)"
+		return 1
+	fi
+	# format: package sha256(colon-separated, uppercase) name
+	# add more entries as: "package SHA256 Name" -- get the official hash from
+	# the project's own README/site (not a mirror) before trusting it here.
+	known_sigs=(
+		"com.beemdevelopment.aegis C6:DB:80:A8:E1:4E:52:30:C1:DE:84:15:EF:82:0D:13:DC:90:1D:8F:E3:3C:F3:AC:B5:7B:68:62:D8:58:A8:23 Aegis"
+	)
+	echo "signing certificate verification:"
+	for entry in "${known_sigs[@]}"; do
+		pkg="$(echo "$entry" | awk '{print $1}')"
+		expected="$(echo "$entry" | awk '{print $2}')"
+		name="$(echo "$entry" | cut -d' ' -f3-)"
+		if ! adb shell pm path "$pkg" >/dev/null 2>&1; then
+			echo "  skip $name (not installed)"
+			continue
+		fi
+		apkpath="$(adb shell pm path "$pkg" 2>/dev/null | tr -d '\r' | sed 's/^package://' | head -1)"
+		adb shell "cat '$apkpath'" 2>/dev/null > "/tmp/verify_$pkg.apk"
+		actual="$(apksigner verify --print-certs "/tmp/verify_$pkg.apk" 2>/dev/null | \
+			grep 'SHA-256' | head -1 | awk '{print $NF}' | tr '[:lower:]' '[:upper:]' | \
+			sed 's/../&:/g;s/:$//')"
+		rm -f "/tmp/verify_$pkg.apk"
+		if [ -z "$actual" ]; then
+			echo "  WARN $name: could not extract signature"
+		elif [ "$actual" = "$expected" ]; then
+			echo "  OK   $name: signature matches"
+		else
+			echo "  MISMATCH $name: expected $expected got $actual"
+		fi
+	done
 }
 
 reset() {
@@ -365,13 +486,14 @@ reset() {
 		link_to_windows_pregranted_permissions link_to_windows_service_pregranted_permissions \
 		always_on_vpn_package always_on_vpn_lockdown captive_portal_detection_enabled \
 		stay_on_while_plugged_in wifi_networks_available_notification_on \
-		wifi_wakeup_enabled adb_wifi_enabled; do
+		wifi_wakeup_enabled adb_wifi_enabled wifi_p2p_pending_factory_reset \
+		bluetooth_discoverability bluetooth_discoverability_timeout; do
 		adb shell settings delete global "$k" >/dev/null 2>&1
 	done
 	for k in wifi_scan_always_enabled bluetooth_scan_always_enabled lock_screen_lock_after_timeout \
 		location_mode doze_pulse_on_pick_up double_tap_to_wake wake_gesture_enabled aod_mode screensaver_enabled \
 		lock_screen_show_notifications lock_screen_allow_private_notifications nfc_on auto_revoke_permissions \
-		nearby_scanning_enabled location_scanning_enabled; do
+		nearby_scanning_enabled location_scanning_enabled nearby_sharing_enabled; do
 		adb shell settings delete secure "$k" >/dev/null 2>&1
 	done
 	for k in aod_mode aod_tap_to_show_mode aod_show_state aod_notifications double_tab_to_wake_up; do
@@ -380,6 +502,7 @@ reset() {
 	for k in screen_off_timeout screen_brightness_mode; do
 		adb shell settings delete system "$k" >/dev/null 2>&1
 	done
+	adb shell pm enable com.google.android.gms.nearby.sharing >/dev/null 2>&1
 	adb shell am set-standby-bucket --user 0 com.samsung.android.kgclient active >/dev/null 2>&1
 	adb shell cmd appops reset com.google.android.gms >/dev/null 2>&1
 	adb shell cmd appops reset com.android.vending >/dev/null 2>&1
@@ -390,7 +513,7 @@ reset() {
 	for p in com.facebook.appmanager com.facebook.services com.facebook.system \
 		com.google.android.adservices.api com.samsung.android.da.daagent \
 		com.samsung.android.dqagent com.samsung.android.knox.analytics.uploader \
-		com.google.android.gms; do
+		com.sec.android.app.launcher com.google.android.gms; do
 		np_rm "$p"
 	done
 	echo "  defaults restored"
@@ -420,6 +543,8 @@ options:
   --bench[=label]   snapshot perf metrics (mem/procs/packages) to a file
   --bench-compare A B  diff two snapshots saved with --bench
   --check           print privacy audit of the current device state
+  --verify          verify signing certs of security-critical apps against known hashes
+  --hacker          echo every command as it runs (verbose green tracing)
   --help|-h         show this help
 
 no options runs the full hardening interactively (per-app y/n/all prompts).
@@ -491,6 +616,11 @@ privacy_check() { # audit current posture: settings, vpn, packages
 	s nearby_scanning_enabled
 	s location_scanning_enabled
 	s location_mode
+	echo "nearby/sharing/bluetooth:"
+	s nearby_sharing_enabled
+	g bluetooth_discoverability
+	g bluetooth_discoverability_timeout
+	g wifi_p2p_pending_factory_reset
 	echo "aod (samsung reads system namespace):"
 	sy aod_mode
 	sy aod_tap_to_show_mode
@@ -594,6 +724,10 @@ if [ "$samsung_mode" = 1 ]; then
 fi
 if [ "$check_mode" = 1 ]; then
 	privacy_check
+	exit 0
+fi
+if [ "$verify_mode" = 1 ]; then
+	verify_sigs
 	exit 0
 fi
 
@@ -727,7 +861,7 @@ yes_install() { # id name
 	fi
 	return 1
 }
-foss_count=39
+foss_count=65
 YESALL=0
 echo "  $foss_count apps:"
 if ask "would you like to install these FOSS private apps?"; then
@@ -773,6 +907,32 @@ if ask "would you like to install these FOSS private apps?"; then
 	yes_install com.valhalla.thor "Thor App Manager" && install_gh trinadhthatakula/Thor com.valhalla.thor "Thor App Manager" 'foss-release'
 	yes_install org.torproject.vpn "Tor VPN" && install_fd org.torproject.vpn "Tor VPN"
 	yes_install de.markusfisch.android.binaryeye "Binary Eye" && install_fd de.markusfisch.android.binaryeye "Binary Eye"
+	yes_install dev.imranr.obtainium.fdroid "Obtainium" && install_fd dev.imranr.obtainium.fdroid "Obtainium"
+	yes_install org.samo_lego.canta "Canta" && install_fd org.samo_lego.canta "Canta"
+	yes_install com.emanuelef.remote_capture "PCAPdroid" && install_fd com.emanuelef.remote_capture "PCAPdroid"
+	yes_install eu.darken.myperm "Permission Pilot" && install_fd eu.darken.myperm "Permission Pilot"
+	yes_install de.seemoo.at_tracking_detection "AirGuard" && install_fd de.seemoo.at_tracking_detection "AirGuard"
+	yes_install net.typeblog.shelter "Shelter" && install_fd net.typeblog.shelter "Shelter"
+	yes_install org.cryptomator.lite "Cryptomator" && install_fd org.cryptomator.lite "Cryptomator"
+	yes_install org.fdroid.fdroid "F-Droid" && { echo "    fetching F-Droid client..."; curl -fsSL --progress-bar --max-time 300 -o "$tmp/fdroid.apk" "https://f-droid.org/F-Droid.apk" && install_apk "$tmp/fdroid.apk" "F-Droid"; }
+	yes_install com.looker.droidify "Droid-ify" && install_fd com.looker.droidify "Droid-ify"
+	yes_install eu.bubu1.fdroidclassic "F-Droid Classic" && install_fd eu.bubu1.fdroidclassic "F-Droid Classic"
+	yes_install app.flicky "Flicky" && install_fd app.flicky "Flicky"
+	yes_install org.gdroid.gdroid "G-Droid" && install_fd org.gdroid.gdroid "G-Droid"
+	yes_install in.sunilpaulmathew.izzyondroid "IzzyOnDroid" && install_fd in.sunilpaulmathew.izzyondroid "IzzyOnDroid"
+	yes_install zed.rainxch.githubstore "Github Store" && install_fd zed.rainxch.githubstore "Github Store"
+	yes_install app.accrescent.client "Accrescent" && install_gh accrescent/accrescent app.accrescent.client "Accrescent"
+	yes_install dev.zapstore.app "Zapstore" && install_gh zapstore/zapstore dev.zapstore.app "Zapstore"
+	yes_install de.jrpie.android.launcher "µLauncher" && install_fd de.jrpie.android.launcher "µLauncher"
+	yes_install com.celzero.bravedns "Rethink DNS + Firewall" && install_fd com.celzero.bravedns "Rethink DNS + Firewall"
+	yes_install io.github.muntashirakon.AppManager "AppManager" && install_fd io.github.muntashirakon.AppManager "AppManager"
+	yes_install com.machiav3lli.backup "Neo Backup" && install_fd com.machiav3lli.backup "Neo Backup"
+	yes_install com.trianguloy.urlchecker "URLCheck" && install_fd com.trianguloy.urlchecker "URLCheck"
+	yes_install com.jarsilio.android.scrambledeggsif "Scrambled Exif" && install_fd com.jarsilio.android.scrambledeggsif "Scrambled Exif"
+	yes_install at.bitfire.davdroid "DAVx⁵" && install_fd at.bitfire.davdroid "DAVx⁵"
+	yes_install com.github.tmo1.sms_ie "SMS Import / Export" && install_fd com.github.tmo1.sms_ie "SMS Import / Export"
+	yes_install com.f0x1d.logfox "LogFox" && install_fd com.f0x1d.logfox "LogFox"
+	yes_install dev.clombardo.dnsnet "DNSNet" && install_fd dev.clombardo.dnsnet "DNSNet"
 else
 	echo "  skipped"
 fi
@@ -796,18 +956,23 @@ fi
 
 	if [ "$tier" -ge 3 ]; then
 	echo "tier 3 removals (launcher/dialer swap):"
-	if adb shell pm path fr.neamar.kiss >/dev/null 2>&1; then
+	if adb shell pm path de.jrpie.android.launcher >/dev/null 2>&1; then
 		r=n
-		echo -n "  disable One UI Home + set KISS home? (breaks samsung gesture-nav/recents until re-enabled) [y/n] "
+		echo -n "  disable One UI Home + set µLauncher home? (breaks samsung gesture-nav/recents until re-enabled) [y/n] "
 		read -r r
 		case "$r" in
 			y|Y|yes|YES)
-				disable com.sec.android.app.launcher
-				adb shell cmd package set-home-activity fr.neamar.kiss/fr.neamar.kiss.MainActivity >/dev/null 2>&1 || true
+				act="$(adb shell cmd package resolve-activity --brief de.jrpie.android.launcher 2>/dev/null | tail -1 | tr -d '\r')"
+				if [ -n "$act" ] && [ "$act" != "No activity found" ]; then
+					disable com.sec.android.app.launcher
+					adb shell cmd package set-home-activity "$act" >/dev/null 2>&1 || true
+				else
+					echo "  warn: could not resolve µLauncher's launch activity, skipping home swap"
+				fi
 				;;
 		esac
 	else
-		echo "  skip One UI Home (kiss launcher not installed)"
+		echo "  skip One UI Home (µLauncher not installed)"
 	fi
 	if adb shell pm path com.fossify.phone >/dev/null 2>&1; then
 		disable com.samsung.android.dialer
@@ -855,12 +1020,20 @@ adb shell settings put global wifi_wakeup_enabled 0
 adb shell settings put global adb_wifi_enabled 0
 adb shell settings put global captive_portal_detection_enabled 0
 adb shell settings put global stay_on_while_plugged_in 0
+# nearby share / quick share (BLE beacon advertising surface)
+adb shell settings put secure nearby_sharing_enabled 0
+adb shell pm disable-user --user 0 com.google.android.gms.nearby.sharing >/dev/null 2>&1
+# wifi p2p auto-reset / WPS UI entry point
+adb shell settings put global wifi_p2p_pending_factory_reset 0
+# bluetooth discoverability (radio stays on, but not advertising/pairable by default)
+adb shell settings put global bluetooth_discoverability 0
+adb shell settings put global bluetooth_discoverability_timeout 0
 if adb shell dumpsys wifi 2>/dev/null | tr -d '\r' | grep -q 'isMacRandomizationOn=true'; then
 	echo "  mac randomization: on (default persistent per-network)"
 else
 	echo "  warn: mac randomization appears OFF - check Settings > Wi-Fi > network > Privacy"
 fi
-echo "settings applied (dns, scanning off, 60s timeout, location off, lock-screen notif hidden, verifier on, backup off, nearby-scan off, captive-portal check off, wifi-open-net-notif off)"
+echo "settings applied (dns, scanning off, 60s timeout, location off, lock-screen notif hidden, verifier on, backup off, nearby-scan off, captive-portal check off, wifi-open-net-notif off, nearby-share off, bluetooth discoverability off)"
 
 echo "gms (google play services) lockdown:"
 gms_uid="$(adb shell pm list packages -U 2>/dev/null | tr -d '\r' | sed -n 's/^package:com.google.android.gms.*uid:\([0-9]*\).*/\1/p' | head -1)"
@@ -928,7 +1101,8 @@ esac
 echo "background-data restriction (netpolicy blacklist, applied only if present):"
 for p in com.facebook.appmanager com.facebook.services com.facebook.system \
 	com.google.android.adservices.api com.samsung.android.da.daagent \
-	com.samsung.android.dqagent com.samsung.android.knox.analytics.uploader; do
+	com.samsung.android.dqagent com.samsung.android.knox.analytics.uploader \
+	com.sec.android.app.launcher; do
 	np_add "$p"
 done
 
