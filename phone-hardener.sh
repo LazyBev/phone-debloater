@@ -53,7 +53,7 @@ EOF
 	set -x
 fi
 
-keep="com.google.android.gms com.google.android.gsf com.google.android.gsf.login com.android.vending"
+keep="com.google.android.gms com.google.android.gsf com.google.android.gsf.login com.android.vending com.sec.android.app.launcher"
 google=(
 	com.google.android.googlequicksearchbox
 	com.google.android.apps.maps
@@ -954,29 +954,28 @@ else
 fi
 # manual apps (play-store only, not on f-droid): cloudflare 1.1.1.1 warp vpn (com.cloudflare.onedotonedotonedotone)
 
-	if [ "$tier" -ge 3 ]; then
-	echo "tier 3 removals (launcher/dialer swap):"
-	if adb shell pm path de.jrpie.android.launcher >/dev/null 2>&1; then
-		r=n
-		echo -n "  disable One UI Home + set µLauncher home? (breaks samsung gesture-nav/recents until re-enabled) [y/n] "
-		read -r r
-		case "$r" in
-			y|Y|yes|YES)
-				act="$(adb shell cmd package resolve-activity --brief de.jrpie.android.launcher 2>/dev/null | tail -1 | tr -d '\r')"
-				if [ -n "$act" ] && [ "$act" != "No activity found" ]; then
-					disable com.sec.android.app.launcher
-					adb shell cmd package set-home-activity "$act" >/dev/null 2>&1 || true
-				else
-					echo "  warn: could not resolve µLauncher's launch activity, skipping home swap"
-				fi
-				;;
-		esac
-	else
-		echo "  skip One UI Home (µLauncher not installed)"
-	fi
+if [ "$tier" -ge 3 ]; then
+	echo "tier 3 removals (dialer/keyboard swap):"
+	echo "  one ui home: kept enabled (required for recents/gesture-nav), heavily restricted via app-ops"
+	adb shell pm enable com.sec.android.app.launcher >/dev/null 2>&1
 	if adb shell pm path com.fossify.phone >/dev/null 2>&1; then
 		disable com.samsung.android.dialer
 	else
+		echo "  skip samsung dialer (fossify phone not installed)"
+	fi
+	kb="$(adb shell ime list -s -a 2>/dev/null | tr -d '\r' | grep '^helium314.keyboard' | head -1)"
+	if [ -n "$kb" ]; then
+		disable com.samsung.android.honeyboard
+		adb shell ime enable "$kb" >/dev/null 2>&1
+		adb shell ime set "$kb" >/dev/null 2>&1
+		echo "  default keyboard -> HeliBoard (honeyboard disabled)"
+	else
+		echo "  skip keyboard swap (HeliBoard not installed)"
+	fi
+fi
+    if adb shell pm path com.fossify.phone >/dev/null 2>&1; then
+	    disable com.samsung.android.dialer
+    else
 		echo "  skip samsung dialer (fossify phone not installed)"
 	fi
 	kb="$(adb shell ime list -s -a 2>/dev/null | tr -d '\r' | grep '^helium314.keyboard' | head -1)"
