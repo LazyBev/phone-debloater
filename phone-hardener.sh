@@ -961,10 +961,18 @@ fi
 if [ "$tier" -ge 3 ]; then
 	echo "tier 3 removals (dialer/keyboard swap):"
 	echo "  one ui home: kept enabled (required for recents/gesture-nav), heavily restricted via app-ops"
+	if ! adb shell pm path com.sec.android.app.launcher >/dev/null 2>&1; then
+		echo "  one ui home: not present for user 0, restoring from system partition..."
+		adb shell cmd package install-existing --user 0 com.sec.android.app.launcher >/dev/null 2>&1
+	fi
 	adb shell pm enable com.sec.android.app.launcher >/dev/null 2>&1
-	adb shell cmd package set-home-activity com.sec.android.app.launcher/com.sec.android.app.launcher.activities.LauncherActivity >/dev/null 2>&1 \
-		|| adb shell cmd package set-home-activity com.sec.android.app.launcher/.activities.LauncherActivity >/dev/null 2>&1
-	echo "  one ui home: set as default home activity"
+	if adb shell pm path com.sec.android.app.launcher >/dev/null 2>&1; then
+		adb shell cmd package set-home-activity com.sec.android.app.launcher/com.sec.android.app.launcher.activities.LauncherActivity >/dev/null 2>&1 \
+			|| adb shell cmd package set-home-activity com.sec.android.app.launcher/.activities.LauncherActivity >/dev/null 2>&1
+		echo "  one ui home: set as default home activity"
+	else
+		echo "  warn: one ui home could not be restored (not present on this device/system image)"
+	fi
 	if adb shell pm path com.fossify.phone >/dev/null 2>&1; then
 		disable com.samsung.android.dialer
 	else
