@@ -960,19 +960,11 @@ fi
 
 if [ "$tier" -ge 3 ]; then
 	echo "tier 3 removals (dialer/keyboard swap):"
-	echo "  one ui home: kept enabled (required for recents/gesture-nav), heavily restricted via app-ops"
+	echo "  one ui home: kept enabled, heavily restricted via app-ops"
 	if ! adb shell pm path com.sec.android.app.launcher >/dev/null 2>&1; then
-		echo "  one ui home: not present for user 0, restoring from system partition..."
 		adb shell cmd package install-existing --user 0 com.sec.android.app.launcher >/dev/null 2>&1
 	fi
 	adb shell pm enable com.sec.android.app.launcher >/dev/null 2>&1
-	if adb shell pm path com.sec.android.app.launcher >/dev/null 2>&1; then
-		adb shell cmd package set-home-activity com.sec.android.app.launcher/com.sec.android.app.launcher.activities.LauncherActivity >/dev/null 2>&1 \
-			|| adb shell cmd package set-home-activity com.sec.android.app.launcher/.activities.LauncherActivity >/dev/null 2>&1
-		echo "  one ui home: set as default home activity"
-	else
-		echo "  warn: one ui home could not be restored (not present on this device/system image)"
-	fi
 	if adb shell pm path com.fossify.phone >/dev/null 2>&1; then
 		disable com.samsung.android.dialer
 	else
@@ -986,6 +978,18 @@ if [ "$tier" -ge 3 ]; then
 		echo "  default keyboard -> HeliBoard (honeyboard disabled)"
 	else
 		echo "  skip keyboard swap (HeliBoard not installed)"
+	fi
+	if adb shell pm path de.jrpie.android.launcher >/dev/null 2>&1; then
+		ulauncher_act="$(adb shell cmd package resolve-activity --brief de.jrpie.android.launcher 2>/dev/null | tail -1 | tr -d '\r')"
+		if [ -n "$ulauncher_act" ] && [ "$ulauncher_act" != "No activity found" ]; then
+			adb shell cmd package set-home-activity "$ulauncher_act" >/dev/null 2>&1 \
+				&& echo "  default launcher -> µLauncher ($ulauncher_act)" \
+				|| echo "  warn: could not set µLauncher as default home"
+		else
+			echo "  warn: could not resolve µLauncher's launch activity"
+		fi
+	else
+		echo "  skip default launcher swap (µLauncher not installed)"
 	fi
 fi
 
