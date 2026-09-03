@@ -248,7 +248,7 @@ tier1=(
 	com.android.dreams.phototable
 	com.samsung.android.app.talkback
 )
-tier2=(com.sec.android.app.launcher com.samsung.android.dialer)
+tier2=(com.samsung.android.dialer)
 userpicks=(
 	com.microsoft.office.outlook
 	com.microsoft.skydrive
@@ -292,8 +292,8 @@ disable() {
 missing_pkgs=()
 appops_deny=(
 	# keyboards
-	"helium314.keyboard CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS RECEIVE_SMS SEND_SMS BODY_SENSORS ACTIVITY_RECOGNITION READ_CLIPBOARD GET_ACCOUNTS"
-	"org.futo.inputmethod.latin CAMERA FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS RECEIVE_SMS SEND_SMS BODY_SENSORS ACTIVITY_RECOGNITION READ_CLIPBOARD GET_ACCOUNTS"
+	"helium314.keyboard CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS RECEIVE_SMS SEND_SMS BODY_SENSORS ACTIVITY_RECOGNITION GET_ACCOUNTS"
+	"org.futo.inputmethod.latin CAMERA FINE_LOCATION COARSE_LOCATION READ_CONTACTS READ_CALL_LOG READ_SMS RECEIVE_SMS SEND_SMS BODY_SENSORS ACTIVITY_RECOGNITION GET_ACCOUNTS"
 	# dialer / sms / messaging
 	"com.fossify.phone CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION BODY_SENSORS ACTIVITY_RECOGNITION READ_CLIPBOARD"
 	"dev.octoshrimpy.quik.fdroid CAMERA RECORD_AUDIO FINE_LOCATION COARSE_LOCATION READ_CALL_LOG BODY_SENSORS ACTIVITY_RECOGNITION"
@@ -536,7 +536,7 @@ installs foss replacements, hardens privacy settings.
 options:
   --accept-all|-y   auto-yes every prompt (incl. app installs, lockdowns)
   --tier N          debloat depth 1-4 (1=google+samsung, 2=+deep-clean,
-                    3=+safe extras/launcher+dialer swap/user picks, 4=all)
+                    3=+safe extras/dialer+keyboard swap/user picks, 4=all)
   --reset           undo everything: restore apps, settings, default keyboard
   --scan            list preinstalled packages not covered by this script
   --samsung         list ALL preinstalled samsung/sec packages with state
@@ -549,6 +549,10 @@ options:
 
 no options runs the full hardening interactively (per-app y/n/all prompts).
 require an authorized device: adb devices
+
+note: one ui home (com.sec.android.app.launcher) is always kept enabled
+(required for recents/gesture-nav) and cannot be disabled by this script.
+it is instead heavily restricted via app-ops and background-data policy.
 EOF
 }
 
@@ -973,21 +977,6 @@ if [ "$tier" -ge 3 ]; then
 		echo "  skip keyboard swap (HeliBoard not installed)"
 	fi
 fi
-    if adb shell pm path com.fossify.phone >/dev/null 2>&1; then
-	    disable com.samsung.android.dialer
-    else
-		echo "  skip samsung dialer (fossify phone not installed)"
-	fi
-	kb="$(adb shell ime list -s -a 2>/dev/null | tr -d '\r' | grep '^helium314.keyboard' | head -1)"
-	if [ -n "$kb" ]; then
-		disable com.samsung.android.honeyboard
-		adb shell ime enable "$kb" >/dev/null 2>&1
-		adb shell ime set "$kb" >/dev/null 2>&1
-		echo "  default keyboard -> HeliBoard (honeyboard disabled)"
-	else
-		echo "  skip keyboard swap (HeliBoard not installed)"
-	fi
-fi
 
 echo "settings:"
 adb shell settings put global private_dns_mode hostname
@@ -1010,9 +999,9 @@ adb shell settings put global verifier_verify_adb_installs 1
 adb shell settings put global hide_error_dialogs 1
 adb shell settings put global backup_enabled 0
 adb shell settings put global adb_require_authorization 1
-adb shell settings put global bixby_pregranted_permissions ""
-adb shell settings put global link_to_windows_pregranted_permissions ""
-adb shell settings put global link_to_windows_service_pregranted_permissions ""
+adb shell "settings put global bixby_pregranted_permissions ''"
+adb shell "settings put global link_to_windows_pregranted_permissions ''"
+adb shell "settings put global link_to_windows_service_pregranted_permissions ''"
 adb shell settings put secure nearby_scanning_enabled 0
 adb shell settings put secure nfc_on 0
 adb shell settings put global wifi_wakeup_enabled 0
